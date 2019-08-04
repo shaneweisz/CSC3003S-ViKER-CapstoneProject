@@ -1,0 +1,13 @@
+<entity id="[n]" type="[Entity][Relationship]">
+	<attribute1> "[Attribute]" </attribute1>
+	.
+	.
+	<attribute[n]> "[Attribute]" </attribute[n]>
+	<primarykey1> "[Primary Key]" </primarykey1>
+	.	
+	.
+	<primarykey[n]> "[Primary Key]" </primarykey[n]>
+</entity>
+
+
+

@@ -1,4 +1,5 @@
 # ViKER Capstone Project
+(Note: we should look at https://dbader.org/blog/write-a-great-readme-for-your-github-project and https://github.com/dbader/readme-template for a README template)
 
 ## 1. Project Description
 

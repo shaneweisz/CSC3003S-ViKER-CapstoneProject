@@ -18,9 +18,11 @@ class ARM_Entity:
 
     def __init__(self, name):
         """
-        Entity constructor.
-        Creates an ARM Entity without any attributes.
+        Constructs an ARM Entity without any attributes.
         Attributes must be added with the `add_attribute()` method.
+
+        Args:
+            name (str): The name of the entity.
         """
         self.name = name
         self.attributes = []

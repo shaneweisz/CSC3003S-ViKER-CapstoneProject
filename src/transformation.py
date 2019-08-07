@@ -5,13 +5,14 @@ for each class attribute):
 1) This function is a method in an EER_Model class.
 2) The EER_Model class contains a list of EER_Entity and EER_Relationship
    objects:
-        'entities' (list)
-        'relationships' (list)
+        'entities' (list of EER_Entity)
+        'relationships' (list of EER_Entity)
 3) An EER_Entity object has the following attributes:
        'name' (string)
        'primary_key' (string)
        ^^^ NOTE: NOT LIST LIKE WE'D THOUGHT - CAN ONLY BE ONE IN EER ^^^
-       'attributes' (list of EER_Attributes)
+       'attributes' (list of EER_Attribute)
+       ^^^ THIS MUST INCLUDE THE PRIMARY KEY ABOVE ^^^
        'foreign_keys' (list of strings - with the appropriate attribute's name)
        'weak' (boolean)
        'parent' (EER_Entity)
@@ -32,28 +33,27 @@ for each class attribute):
 '''
 
 
-def transform_to_arm(eer):
+def transform_to_arm(self):
     """Applies the set of transformation rules for EER to ARM.
 
-    Args:
-        eer (EER_Model): An object representation of an EER Model.
-
     Returns:
-        ARM: The corresponding ARM model resulting from the transformation
+        ARM: The ARM model resulting from the transformation from the
+             EER model given by `self`.
     """
     arm = ARM()        # will store the new ARM model
     arm_entities = []  # the entities that will compose the ARM model
 
     # Create the relations for entities
-    for entity in eer.get_entities():
+    for entity in self.entities:
         name = entity.get_name()
         arm_entity = ARM_Entity(name)  # construct a new ARM entity e.g "Movie"
 
-        for attribute in entity.get_attributes():
-            arm_entity.add_attribute(attribute)  # e.g "Runtime"
+        for attr_name in entity.get_attributes():
+            arm_attr = new ARM_Attribute(attr_name, "anyType")
+            arm_entity.add_attribute(arm_attr)  # e.g "Runtime (anyType)"
 
         pk = entity.get_primary_key()
-        arm_entity.add_primary_key(pk)  # e.g. "MovieID"
+        arm_entity.add_primary_key(pk)  # e.g. "MovieID", and recall arm's primary key is a list # noqa
 
         arm.add_arm_entity(arm_entity)
 
@@ -71,11 +71,14 @@ def transform_to_arm(eer):
             entity1_name = entity1.get_name()
             # Search for the corresponding ARM Entity
             victim_entity = "placeholder"
-            for entity in arm_entities:
-                if entity.get_name() == entity1_name:
-                    victim_entity = entity
+
+            for ent in arm_entities:
+                if ent.get_name() == entity1_name:
+                    victim_entity = ent
+
+            assert victim_entity != "placeholder"  # checking a victim entity has been found # noqa
             # Add foreign key - the primary key of the other entity
-            victim_entity.add_attribute(entity2.get_primary_key()[0])
+            victim_entity.add_attribute(entity2.get_primary_key(), "anyType")
         else:
             # One-to-many or many-to-many
             # Need a new relation

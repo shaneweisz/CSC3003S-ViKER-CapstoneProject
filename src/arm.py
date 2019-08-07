@@ -16,7 +16,7 @@ class ARM:
     load_arm():
         Populates the ARM model object from an XML file
     transform_to_eer():
-        Transforms the ARM and returns the corresponding EER model object
+        Applies the set of transformation rules for ARM to EER.
     save_to_xml():
         Saves the ARM model object as an XML file
 
@@ -60,7 +60,7 @@ class ARM:
         Actor(__ActorID__ (anyType), Name (anyType), Age (int), Sex (anyType))
         """
         str_repr = "ARM Model:"
-        underline = "-"*len(str_repr) + "\n"  # to underline 'ARM Model:'
-        str_repr = underline + str_repr + "\n" + underline
+        underline = "\n" + "-"*len(str_repr) + "\n"  # to underline 'ARM Model'
+        str_repr += underline
         str_repr += "\n".join(ent.__str__() for ent in self.arm_entities)
         return str_repr

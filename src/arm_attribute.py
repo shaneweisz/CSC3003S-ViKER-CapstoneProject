@@ -11,7 +11,12 @@ class ARM_Attribute:
     """
 
     def __init__(self, name, data_type="anyType"):
-        """Attribute constructor - with default data type of 'anyType'."""
+        """
+        Args:
+            name (str): The name of the attribute.
+            data_type (str): Optional data type of the attribute.
+                             Defaults to 'anyType' if no alternative provided.
+        """
         self.name = name
         self.data_type = data_type
 

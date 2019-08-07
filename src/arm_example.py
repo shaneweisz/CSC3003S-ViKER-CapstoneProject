@@ -4,7 +4,6 @@ from arm import ARM
 
 
 def run_example():
-
     arm = ARM()
 
     ent = ARM_Entity("Movie")

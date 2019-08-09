@@ -1,10 +1,8 @@
-from arm_entity import ARM_Entity
-from arm_attribute import ARM_Attribute
-from arm import ARM
+from arm import ARM_Attribute, ARM_Entity, ARM_Model
 
 
 def run_example():
-    arm = ARM()
+    arm = ARM_Model()
 
     ent = ARM_Entity("Movie")
     ent.add_attribute(ARM_Attribute("MovieID"))

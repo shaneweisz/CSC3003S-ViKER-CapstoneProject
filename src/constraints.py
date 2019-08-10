@@ -70,5 +70,34 @@ class FK_Constraint(Constraint):
         return "foreign key ({}) references {}".format(self.fk, self.references)
 
 
-class pathfd_Constraint(Constraint):
-    pass
+class Pathfd_Constraint(Constraint):
+    """
+    A class used to represent a pathfd constraint in an ARM_Entity.
+
+    Attributes
+    ----------
+    attributes : list
+        The attributes that together determine `target`
+    target : str
+        The name of the attribute that is determined by the fd
+    """
+
+    def __init__(self, attributes, target):
+        self.attributes = attributes
+        self.target = target
+
+    def get_attributes(self):
+        """Getter for the attribues."""
+        return self.attributes
+
+    def get_references(self):
+        """Getter for the target."""
+        return self.target
+
+    def __str__(self):
+        """
+        String representation of the pathfd constraint.
+        e.g. 'pathdf (pnum) -> self'
+        """
+        attr_str = ", ".join(self.attributes)
+        return "pathfd ({}) -> {}".format(attr_str, self.target)

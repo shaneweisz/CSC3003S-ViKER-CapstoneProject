@@ -11,8 +11,7 @@ for each class attribute):
         'relationships' (list of EER_Relationships)
 3) An EER_Entity object has the following attributes:
        'name' (string)
-       'primary_key' (string)
-       ^^^ NOTE: NOT LIST LIKE WE'D THOUGHT - CAN ONLY BE ONE IN EER ^^^
+       'primary_key' (list)
        'attributes' (list of EER_Attribute)
        ^^^ THIS MUST INCLUDE THE PRIMARY KEY ABOVE ^^^
        'foreign_keys' (list of strings - with the appropriate attribute's name)
@@ -61,7 +60,7 @@ def transform_to_arm(self):
         # STEP C - Primary Key
         pk = entity.get_primary_key()
         arm_entity.add_constraint(PK_Constraint("self"))  # e.g. "MovieID", and recall arm's primary key is a list # noqa
-
+        arm_entity.add_constraint(Pathfd_Constraint(entity.get_primary_key(), "self"))
         arm.add_arm_entity(arm_entity)
 
     # Create the relations for relationships

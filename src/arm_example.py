@@ -1,5 +1,5 @@
 from arm import ARM_Model, ARM_Entity, ARM_Attribute
-from constraints import PK_Constraint, FK_Constraint
+from constraints import PK_Constraint, FK_Constraint, Pathfd_Constraint
 
 
 def arm_example():
@@ -13,6 +13,7 @@ def arm_example():
     ent.add_attribute(ARM_Attribute("office", "STRING"))
     ent.add_attribute(ARM_Attribute("department", "OID"))
     ent.add_constraint(PK_Constraint("self"))
+    ent.add_constraint(Pathfd_Constraint(["pnum"], "self"))
     ent.add_constraint(FK_Constraint("department", "department"))
 
     arm.add_arm_entity(ent)

@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import filedialog
+from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
 import sys
 from arm_example import arm_example
@@ -86,11 +88,11 @@ class GUI(tk.Frame):
         self.window.config(menu=root_menu)
 
         def open_file_picker():
-            filename = tk.filedialog.askopenfilename(initialdir="/",
-                                                     title="Select file",
-                                                     filetypes=(
-                                                         ("xml files", "*.xml"),
-                                                         ("all files", "*.*")))
+            filename = filedialog.askopenfilename(initialdir="/",
+                                                  title="Select file",
+                                                  filetypes=(
+                                                      ("xml files", "*.xml"),
+                                                      ("all files", "*.*")))
             messagebox.showinfo("Load", "File Directory Selected:\n{}".format(filename))
 
         load_menu = tk.Menu(root_menu)

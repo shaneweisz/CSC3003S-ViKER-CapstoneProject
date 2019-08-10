@@ -1,114 +1,4 @@
-class ARM_Attribute:
-    """
-    A class used to represent an attribute of an ARM Entity.
-
-    Attributes
-    ----------
-    name : str
-        The name of the attribute.
-    data_type : str
-        The data type of the attribute - defaulted to anyType.
-    """
-
-    def __init__(self, name, data_type="anyType"):
-        """
-        Args:
-            name (str): The name of the attribute.
-            data_type (str): Optional data type of the attribute.
-                             Defaults to 'anyType' if no alternative provided.
-        """
-        self.name = name
-        self.data_type = data_type
-
-    def get_name(self):
-        """Getter for name."""
-        return self.name
-
-    def get_data_type(self):
-        """Getter for data type."""
-        return self.data_type
-
-    def __str__(self):
-        """
-        String representation of the attribute - its name and data type.
-        e.g. 'age INT'
-        """
-        return "{} {}".format(self.name, self.data_type)
-
-
-class ARM_Entity:
-    """
-    A class used to represent an ARM Entity
-    - i.e. a relation/entity in an ARM model.
-
-    Attributes
-    ----------
-    name : str
-        The name of the entity.
-    attributes : list of ARM_Attribute
-        The attributes of the entity - including primary key attributes.
-    primary_key : list of str
-        The names of the attributes that form the primary key.
-    """
-
-    def __init__(self, name):
-        """
-        Constructs an ARM Entity without any attributes.
-        Attributes must be added with the `add_attribute()` method.
-
-        Args:
-            name (str): The name of the entity.
-        """
-        self.name = name
-        self.attributes = []
-        self.primary_key = []
-
-    def add_attribute(self, new_attribute):
-        """Adds an ARM_Attribute to the entity.
-
-        Raises:
-            AssertionError:
-                if `new_attribute` supplied is not of type `ARM_Attribute`
-        """
-        assert type(new_attribute) == ARM_Attribute
-        self.attributes.append(new_attribute)
-
-    def add_primary_key(self, new_primary_key):
-        """Adds one of the entity's attributes to its primary key.
-
-        Raises:
-            AssertionError:
-                if `new_primary_key` supplied is not the `name` of one of this
-                entity's attributes
-        """
-        assert new_primary_key in [attr.get_name() for attr in self.attributes]
-        self.primary_key.append(new_primary_key)
-
-    def get_name(self):
-        """Getter for name."""
-        return self.name
-
-    def get_attributes(self):
-        """Getter for attributes."""
-        return self.attributes
-
-    def get_primary_key(self):
-        """Getter for primary_key."""
-        return self.primary_key
-
-    def __str__(self):
-        """
-        String representation of the entity.
-        e.g. 'Actor(__ActorID__ (anyType), Name (anyType), Age (int))'
-        """
-        non_key_attributes = [attr.__str__() for attr in self.attributes
-                              if attr.get_name() not in self.primary_key]
-        attributes_str = ", ".join(non_key_attributes)
-        pk_str = ", ".join(("__" + pk.get_name() + "__"
-                            + " (" + pk.get_data_type() + ")")
-                           for pk in self.attributes
-                           if pk.get_name() in self.primary_key)
-        return "{}({}, {})".format(self.name, pk_str, attributes_str)
+import constraints
 
 
 class ARM_Model:
@@ -174,3 +64,137 @@ class ARM_Model:
         str_repr += underline
         str_repr += "\n".join(ent.__str__() for ent in self.arm_entities)
         return str_repr
+
+
+class ARM_Entity:
+    """
+    A class used to represent an ARM Entity
+    - i.e. a relation/entity in an ARM model.
+
+    Attributes
+    ----------
+    name : str
+        The name of the entity.
+    attributes : list of ARM_Attribute
+        The attributes of the entity - including primary key attributes.
+    constraints : list of Constraint
+        The constraints of the entity - such as a PK_Constraint,
+        FK_Constraint etc.
+    """
+
+    def __init__(self, name):
+        """
+        Constructs an ARM Entity without any attributes.
+        Attributes must be added with the `add_attribute()` method.
+        Constraints must be added with the `add_constraint()` method.
+
+        Args:
+            name (str): The name of the entity.
+        """
+        self.name = name
+        self.attributes = []
+        self.constraints = []
+
+    def add_attribute(self, new_attribute):
+        """Adds an ARM_Attribute to the entity.
+
+        Raises:
+            AssertionError:
+                if `new_attribute` supplied is not of type `ARM_Attribute`
+        """
+        assert type(new_attribute) == ARM_Attribute
+        self.attributes.append(new_attribute)
+
+    def add_constraint(self, new_constraint):
+        """Adds a Constraint to the entity.
+
+        Raises:
+            AssertionError:
+                if `new_constraint` supplied is not of type `Constraint`
+        """
+        assert isinstance(new_constraint, constraints.Constraint)
+        self.constraints.append(new_constraint)
+
+    def add_primary_key(self, new_primary_key):
+        """Adds one of the entity's attributes to its primary key.
+
+        Raises:
+            AssertionError:
+                if `new_primary_key` supplied is not the `name` of one of this
+                entity's attributes
+        """
+        assert new_primary_key in [attr.get_name() for attr in self.attributes]
+        self.primary_key.append(new_primary_key)
+
+    def get_name(self):
+        """Getter for name."""
+        return self.name
+
+    def get_attributes(self):
+        """Getter for attributes."""
+        return self.attributes
+
+    def get_constraints(self):
+        """Getter for constraints."""
+        return self.constraints
+
+    def __str__(self):
+        """
+        String representation of the entity.
+        e.g.
+        'Professor:
+            Attributes:
+                self OID
+                pnum INT
+                pname STRING
+                office STRING
+                department OID
+            Constraints:
+                primary key (self)'
+        """
+        str_repr = "{}:\n".format(self.name)
+        str_repr += "   Attributes:\n"
+        for attr in self.attributes:
+            str_repr += "      {}\n".format(attr.__str__())
+        str_repr += "  Constraints:\n"
+        for con in self.constraints:
+            str_repr += "      {}\n".format(con.__str__())
+        return str_repr
+
+
+class ARM_Attribute:
+    """
+    A class used to represent an attribute of an ARM Entity.
+
+    Attributes
+    ----------
+    name : str
+        The name of the attribute.
+    data_type : str
+        The data type of the attribute - defaulted to anyType.
+    """
+
+    def __init__(self, name, data_type="anyType"):
+        """
+        Args:
+            name (str): The name of the attribute.
+            data_type (str): Optional data type of the attribute.
+                             Defaults to 'anyType' if no alternative provided.
+        """
+        self.name = name
+        self.data_type = data_type
+
+    def get_name(self):
+        """Getter for name."""
+        return self.name
+
+    def get_data_type(self):
+        """Getter for data type."""
+        return self.data_type
+
+    def __str__(self):
+        """
+        String representation of the attribute - its name and data type.
+        e.g. 'age (INT)'
+        """
+        return "{} ({})".format(self.name, self.data_type)

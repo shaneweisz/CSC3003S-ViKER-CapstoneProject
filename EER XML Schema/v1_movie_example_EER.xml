@@ -1,4 +1,0 @@
-<movie id="1" type="Entity">
-	<attribute1> "Title" </attribute1>
-	<primarykey1> "Movie ID" </primarykey1>
-</movie>

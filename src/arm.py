@@ -1,6 +1,3 @@
-from arm_entity import ARM_Entity
-
-
 class ARM_Attribute:
     """
     A class used to represent an attribute of an ARM Entity.
@@ -34,9 +31,9 @@ class ARM_Attribute:
     def __str__(self):
         """
         String representation of the attribute - its name and data type.
-        e.g. 'Age (int)'
+        e.g. 'age INT'
         """
-        return "{} ({})".format(self.name, self.data_type)
+        return "{} {}".format(self.name, self.data_type)
 
 
 class ARM_Entity:

@@ -1,95 +1,138 @@
-from tkinter import Label, Canvas, Button, Menu, filedialog, Tk, messagebox
+import tkinter as tk
+from tkinter.scrolledtext import ScrolledText
 import sys
+from arm_example import arm_example
+from arm import ARM_Attribute, ARM_Entity, ARM_Model
 
-X_SIZE = 825
+
+X_SIZE = 850
 Y_SIZE = 600
+FONT = 'Courier'
 
 
-def main():
-    window = Tk()
-    window.title("ViKER Transformations")
-    window.geometry('{}x{}'.format(X_SIZE, Y_SIZE))
-    window.config(bg='black')  # set background color to black
+class GUI(tk.Frame):
+    '''
+    A class used to construct the core GUI for the application.
 
-    window.grid_rowconfigure(1, minsize=20)
-    window.grid_columnconfigure(0, minsize=50)
-    lbl_header = Label(window, text="ViKER Transformation Tool",
-                       bg="black", fg="white", font=("Courier", 25))
-    lbl_header.grid(row=0, column=2, columnspan=3)
+    Attributes
+    ----------
+    window : tk.Tk
+        A top-level widget for the main window of the application
+    txt_eer : tk.Text
+        A text widget for displaying the EER Model
+    txt_arm : tk.Text
+        A text widget for displaying the ARM Model
+    '''
 
-    # EER Model Label and Canvas
-    lbl_eer = Label(window, text="EER Model")
-    lbl_eer.config(font=("Courier", 14))
-    lbl_eer.grid(column=2, row=5)
+    def __init__(self, parent, *args, **kwargs):
+        tk.Frame.__init__(self, parent, *args, **kwargs)
 
-    canvas_eer = Canvas(window, width=300, height=400, bg="white")
-    canvas_eer.grid(column=2, row=7)
+        self.window = parent
+        self.window.title("ViKER Transformations")
+        self.window.geometry('{}x{}'.format(X_SIZE, Y_SIZE))
+        self.window.config(bg='black')  # set background color to black
 
-    # ARM Model Label and Canvas
-    lbl_arm = Label(window, text="ARM Model")
-    lbl_arm.config(font=("Courier", 14))
-    lbl_arm.grid(column=4, row=5)
+        self.window.grid_rowconfigure(1, minsize=20)
+        self.window.grid_columnconfigure(0, minsize=100)
+        lbl_header = tk.Label(self.window, text="ViKER Transformation Tool",
+                              bg="black", fg="white", font=(FONT, 25))
+        lbl_header.grid(row=0, column=2, columnspan=3)
 
-    canvas_arm = Canvas(window, width=300, height=400, bg="white")
-    canvas_arm.grid(column=4, row=7)
+        # EER Model Label and Canvas
+        lbl_eer = tk.Label(self.window, text="EER Model")
+        lbl_eer.config(font=("Courier", 14))
+        lbl_eer.grid(column=2, row=5)
 
-    # Adds space between ARM/EER labels and respective canvas
-    window.grid_rowconfigure(6, minsize=10)
+        frm_txtcontainer_eer = tk.Frame(self.window, borderwidth=1, relief="sunken")
+        self.txt_eer = tk.Text(frm_txtcontainer_eer, wrap='none', width=40,
+                               height=27, bg="white")
+        text_vsb_eer = tk.Scrollbar(
+            frm_txtcontainer_eer, orient="vertical", command=self.txt_eer.yview)
+        text_hsb_eer = tk.Scrollbar(frm_txtcontainer_eer, orient="horizontal",
+                                    command=self.txt_eer.xview)
+        self.txt_eer.configure(yscrollcommand=text_vsb_eer.set, xscrollcommand=text_hsb_eer.set)
+        self.txt_eer.grid(row=0, column=0, sticky="nsew")
+        text_vsb_eer.grid(row=0, column=1, sticky="ns")
+        text_hsb_eer.grid(row=1, column=0, sticky="ew")
+        frm_txtcontainer_eer.grid(column=2, row=7)
 
-    # Spacing between the models i.e. column 3 will be at least 50px wide
-    window.grid_columnconfigure(3, minsize=50)
+        # ARM Model Label and Canvas
+        lbl_arm = tk.Label(self.window, text="ARM Model")
+        lbl_arm.config(font=(FONT, 14))
+        lbl_arm.grid(column=4, row=5)
 
-    # Menu for Loading and Saving
+        frm_txtcontainer_arm = tk.Frame(self.window, borderwidth=1, relief="sunken")
+        self.txt_arm = tk.Text(frm_txtcontainer_arm, wrap='none', width=40,
+                               height=27, bg="white")
+        text_vsb_arm = tk.Scrollbar(
+            frm_txtcontainer_arm, orient="vertical", command=self.txt_arm.yview)
+        text_hsb_arm = tk.Scrollbar(frm_txtcontainer_arm, orient="horizontal",
+                                    command=self.txt_arm.xview)
+        self.txt_arm.configure(yscrollcommand=text_vsb_arm.set, xscrollcommand=text_hsb_arm.set)
+        self.txt_arm.grid(row=0, column=0, sticky="nsew")
+        text_vsb_arm.grid(row=0, column=1, sticky="ns")
+        text_hsb_arm.grid(row=1, column=0, sticky="ew")
+        frm_txtcontainer_arm.grid(column=4, row=7)
 
-    root_menu = Menu(window)
-    window.config(menu=root_menu)
+        # Adds space between ARM/EER labels and respective canvas
+        self.window.grid_rowconfigure(6, minsize=10)
 
-    def open_file_picker():
-        filename = filedialog.askopenfilename(initialdir="/",
-                                              title="Select file",
-                                              filetypes=(
-                                                  ("xml files", "*.xml"),
-                                                  ("all files", "*.*")))
-        messagebox.showinfo("Load", "File Directory Selected:\n{}".format(filename))
+        # Spacing between the models i.e. column 3 will be at least 50px wide
+        self.window.grid_columnconfigure(3, minsize=50)
 
-    load_menu = Menu(root_menu)
-    root_menu.add_cascade(label="Load", menu=load_menu)
-    load_menu.add_command(label="Load ARM", command=open_file_picker)
-    load_menu.add_command(label="Load EER", command=open_file_picker)
+        # Menu for Loading and Saving
 
-    save_menu = Menu(root_menu)
-    root_menu.add_cascade(label="Save", menu=save_menu)
-    save_menu.add_command(label="Save ARM",
-                          command=lambda: messagebox.showinfo(
-                              "Save", "Save ARM Clicked"))
-    save_menu.add_command(label="Save EER",
-                          command=lambda: messagebox.showinfo(
-                              "Save", "Save EER Clicked"))
+        root_menu = tk.Menu(self.window)
+        self.window.config(menu=root_menu)
 
-    # Transform Button
+        def open_file_picker():
+            filename = tk.filedialog.askopenfilename(initialdir="/",
+                                                     title="Select file",
+                                                     filetypes=(
+                                                         ("xml files", "*.xml"),
+                                                         ("all files", "*.*")))
+            messagebox.showinfo("Load", "File Directory Selected:\n{}".format(filename))
 
-    btn_transform = Button(window, text="Transform", font=("Courier, 20"))
-    window.grid_rowconfigure(8, minsize=20)
-    btn_transform.grid(row=9, column=2, columnspan=3, sticky='ew')
+        load_menu = tk.Menu(root_menu)
+        root_menu.add_cascade(label="Load", menu=load_menu)
+        load_menu.add_command(label="Load ARM", command=open_file_picker)
+        load_menu.add_command(label="Load EER", command=open_file_picker)
 
-    # Help Button
-    help_msg = "Consult Help PDF for transformation assistance."
-    btn_help = Button(window, text="?", fg="blue",
-                      command=lambda: messagebox.showinfo("Help", help_msg))
-    btn_help.config(font=("Courier", 14))
-    btn_help.grid(row=0, column=6)
+        save_menu = tk.Menu(root_menu)
+        root_menu.add_cascade(label="Save", menu=save_menu)
+        save_menu.add_command(label="Save ARM",
+                              command=lambda: messagebox.showinfo(
+                                  "Save", "Save ARM Clicked"))
+        save_menu.add_command(label="Save EER",
+                              command=lambda: messagebox.showinfo(
+                                  "Save", "Save EER Clicked"))
 
-    window.grid_columnconfigure(5, minsize=10)
-    window.grid_columnconfigure(7, minsize=10)
+        # Transform Button
 
-    # Exit Button
-    btn_exit = Button(window, text="Exit", fg="red",
-                      command=lambda: window.quit())
-    btn_exit.config(font=("Courier", 14))
-    btn_exit.grid(row=0, column=8)
+        btn_transform = tk.Button(self.window, text="Transform", font=(FONT, 20))
+        self.window.grid_rowconfigure(8, minsize=20)
+        btn_transform.grid(row=9, column=2, columnspan=3, sticky='ew')
 
-    window.mainloop()
+        # Help Button
+        help_msg = "1. Click the Load Menu Item to load a EER or ARM XML file.\n"
+        help_msg += "2. Click the Save Menu Item to save a transformed model.\n"
+        help_msg += "3. Consult the External Help PDF for further assistance."
+        btn_help = tk.Button(self.window, text="?", fg="blue",
+                             command=lambda: messagebox.showinfo("Help", help_msg))
+        btn_help.config(font=(FONT, 14))
+        btn_help.grid(row=0, column=6)
+
+        self.window.grid_columnconfigure(5, minsize=10)
+        self.window.grid_columnconfigure(7, minsize=10)
+
+        # Exit Button
+        btn_exit = tk.Button(self.window, text="Exit", fg="red",
+                             command=lambda: self.window.quit())
+        btn_exit.config(font=(FONT, 14))
+        btn_exit.grid(row=0, column=8)
 
 
 if __name__ == "__main__":
-    main()
+    gui = GUI(tk.Tk())
+    gui.txt_arm.insert(tk.END, arm_example())  # END for appending
+    gui.window.mainloop()

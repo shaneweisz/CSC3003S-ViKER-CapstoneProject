@@ -1,7 +1,8 @@
 from arm import ARM_Attribute, ARM_Entity, ARM_Model
 
 
-def run_example():
+def arm_example():
+    """Returns an example constructed ARM Model."""
     arm = ARM_Model()
 
     ent = ARM_Entity("Movie")
@@ -23,8 +24,8 @@ def run_example():
     # print(ent2)
     arm.add_arm_entity(ent2)
 
-    print(arm)
+    return arm
 
 
 if __name__ == '__main__':
-    run_example()
+    print(arm_example())

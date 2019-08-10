@@ -40,26 +40,19 @@ class PK_Constraint(Constraint):
 
 class FK_Constraint(Constraint):
     """
-    A class used to represent a primary key constraint in an ARM_Entity.
+    A class used to represent a foreign key constraint in an ARM_Entity.
 
     Attributes
     ----------
-    name : str
-        The name of the foreign key
     fk : str
         The name of the ARM Attribute that forms the foreign key
     references : str
         The name of the ARM Entity that the foreign key references
     """
 
-    def __init__(self, name, fk, references):
-        self.name = name
+    def __init__(self, fk, references):
         self.fk = fk
         self.references = references
-
-    def get_name(self):
-        """Getter for the name."""
-        return self.pk
 
     def get_fk(self):
         """Getter for the foreign key."""
@@ -72,9 +65,9 @@ class FK_Constraint(Constraint):
     def __str__(self):
         """
         String representation of the foreign key constraint.
-        e.g. 'constraint dept foreign key (department) references department'
+        e.g. 'foreign key (department) references department'
         """
-        return "constraint {} foreign key ({}) references {}".format(self.name, self.fk, self.references)
+        return "foreign key ({}) references {}".format(self.fk, self.references)
 
 
 class pathfd_Constraint(Constraint):

@@ -1,3 +1,5 @@
+from constraints import PK_Constraint, FK_Constraint
+
 '''
 The following function assumes the following (with get_[attribute]() methods
 for each class attribute):
@@ -6,7 +8,7 @@ for each class attribute):
 2) The EER_Model class contains a list of EER_Entity and EER_Relationship
    objects:
         'entities' (list of EER_Entity)
-        'relationships' (list of EER_Entity)
+        'relationships' (list of EER_Relationships)
 3) An EER_Entity object has the following attributes:
        'name' (string)
        'primary_key' (string)
@@ -23,10 +25,10 @@ for each class attribute):
             'optional' (bool)
 4) An EER_Relationship object has the following attributes:
         'name' (string)
-        'entity1' (EER_Entity)
-        'entity2' (EER_Entity)
-        'multiplicity1' (string) e.g. '0..1', '1..n' etc.
-        'multiplicity2' (string) e.g. '0..1', '1..n' etc.
+        'entity1' (string : name)
+        'entity2' (string : name)
+        'multiplicity1' (string) e.g. '1', 'n' etc.
+        'multiplicity2' (string) e.g. '1', 'n' etc.
         'attributes' (list of EER_Attributes)
         ^^^ NOTE: We forgot this in class diagram - a relationship can have its
                   own attributes ^^^
@@ -45,15 +47,20 @@ def transform_to_arm(self):
 
     # Create the relations for entities
     for entity in self.entities:
+        # STEP A - Table Declaration
+
         name = entity.get_name()
         arm_entity = ARM_Entity(name)  # construct a new ARM entity e.g "Movie"
-
+        arm_entity.add_attribute("self", "OID")
         for attr_name in entity.get_attributes():
             arm_attr = new ARM_Attribute(attr_name, "anyType")
             arm_entity.add_attribute(arm_attr)  # e.g "Runtime (anyType)"
 
+        # STEP B - Foreign Keys - done in the relationships section below
+
+        # STEP C - Primary Key
         pk = entity.get_primary_key()
-        arm_entity.add_primary_key(pk)  # e.g. "MovieID", and recall arm's primary key is a list # noqa
+        arm_entity.add_constraint(PK_Constraint("self"))  # e.g. "MovieID", and recall arm's primary key is a list # noqa
 
         arm.add_arm_entity(arm_entity)
 
@@ -65,23 +72,35 @@ def transform_to_arm(self):
         mult1 = relationship.get_multiplicity1()
         mult2 = relationship.get_multiplicity2()
 
-        if 'n' not in mult1 and 'n' not in mult2:
-            # Then one to one relationship
-            # No need for a new relation - just add foreign key to one entity
-            entity1_name = entity1.get_name()
-            # Search for the corresponding ARM Entity
-            victim_entity = "placeholder"
+        if (mult1 == "1" and mult2 == "1") or (mult1 == "n" and mult2 == "1"):
+            # Then one to one, or many-to-one relationship
+            # No need for a new relation - just add foreign key to first entity
 
+            # Find the ARM_Entity object corresponding to the name entity1
+            victim_entity = "placeholder"
             for ent in arm_entities:
-                if ent.get_name() == entity1_name:
+                if ent.get_name() == entity1:
                     victim_entity = ent
 
-            assert victim_entity != "placeholder"  # checking a victim entity has been found # noqa
-            # Add foreign key - the primary key of the other entity
-            victim_entity.add_attribute(entity2.get_primary_key(), "anyType")
+            assert victim_entity != "placeholder"  # checking a victim entity has been found
+            # Add foreign key - the name of the other entity
+            victim_entity.add_attribute(entity2, "OID")
+            victim_entity.add_constraint(FK_Constraint(entity2, entity2))
+        else if mult1 == "1" and mult2 == "n":
+            # One-to-many relationship
+            # Add foreign key to the entity on the n side of the relationship
+
+            # Find the ARM_Entity object corresponding to the name entity2
+            victim_entity = "placeholder"
+            for ent in arm_entities:
+                if ent.get_name() == entity2:
+                    victim_entity = ent
+
+            assert victim_entity != "placeholder"  # checking a victim entity has been found
+            # Add foreign key - the name of the other entity
+            victim_entity.add_attribute(entity1, "OID")
+            victim_entity.add_constraint(FK_Constraint(entity1, entity1))
         else:
-            # One-to-many or many-to-many
-            # Need a new relation
             pass
 
     return arm

@@ -6,17 +6,17 @@ def arm_example():
     """Returns an example constructed ARM Model."""
     arm = ARM_Model()
 
-    ent = ARM_Entity("Professor")
+    ent = ARM_Entity("professor")
     ent.add_attribute(ARM_Attribute("self", "OID"))
     ent.add_attribute(ARM_Attribute("pnum", "INT"))
     ent.add_attribute(ARM_Attribute("pname", "STRING"))
     ent.add_attribute(ARM_Attribute("office", "STRING"))
     ent.add_attribute(ARM_Attribute("department", "OID"))
     ent.add_constraint(PK_Constraint("self"))
-    ent.add_constraint(FK_Constraint("dept", "department", "department"))
+    ent.add_constraint(FK_Constraint("department", "department"))
 
     arm.add_arm_entity(ent)
-    ent2 = ARM_Entity("Department")
+    ent2 = ARM_Entity("department")
     ent2.add_attribute(ARM_Attribute("self", "OID"))
     ent2.add_constraint(PK_Constraint("self"))
     ent2.add_attribute(ARM_Attribute("dcode", "INT"))

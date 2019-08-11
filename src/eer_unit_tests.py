@@ -1,4 +1,5 @@
 import eer
+import arm
 import unittest2
 
 class Tests(unittest2.TestCase):
@@ -42,14 +43,12 @@ class Tests(unittest2.TestCase):
         self.assertEqual(EER.eer_entities[1].primary_keys[0].get_name(), "dcode", "Should be dcode")
         self.assertEqual(EER.eer_entities[1].attributes[1].get_name(), "dname", "Should be dname")
 
-        self.assertEqual(len(EER.eer_relations), 1, "Should be 1")
-        self.assertEqual(EER.eer_relations[0].get_name(), "WORK", "Should be WORK")
-        self.assertEqual(EER.eer_relations[0].get_entity1(), "Professor", "Should be Professor")
-        self.assertEqual(EER.eer_relations[0].get_entity2(), "Department", "Should be Department")
-        self.assertEqual(EER.eer_relations[0].get_mult1(), "n", "Should be n")
-        self.assertEqual(EER.eer_relations[0].get_mult2(), "1", "Should be 1")
-
-
+        self.assertEqual(len(EER.eer_relationships), 1, "Should be 1")
+        self.assertEqual(EER.eer_relationships[0].get_name(), "WORK", "Should be WORK")
+        self.assertEqual(EER.eer_relationships[0].get_entity1(), "Professor", "Should be Professor")
+        self.assertEqual(EER.eer_relationships[0].get_entity2(), "Department", "Should be Department")
+        self.assertEqual(EER.eer_relationships[0].get_mult1(), "n", "Should be n")
+        self.assertEqual(EER.eer_relationships[0].get_mult2(), "1", "Should be 1")
 
 if __name__ == '__main__':
     unittest2.main()

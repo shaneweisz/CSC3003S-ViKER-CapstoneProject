@@ -61,12 +61,26 @@ def open_arm_file_picker():
 
 def transform():
     if eer_loaded:
+        global arm_model
         arm_model = eer_model.transform_to_arm()
         gui.txt_arm.insert(tk.END, arm_model.__str__())
         gui.btn_transform.config(text="Transform")
         gui.btn_transform.config(state="disabled")
+        global arm_loaded
+        arm_loaded = True
     elif arm_loaded:
         pass  # TO DO: Implement transform from ARM to EER
+
+
+def save_arm():
+    if arm_loaded:
+        new_filename = eer_filename[:-4] + "_transformed.txt"
+        f = open(new_filename, "w")
+        f.write(arm_model.__str__())
+        f.close()
+        messagebox.showinfo("Save", "ARM Transformation Output Saved ")
+    else:
+        messagebox.showinfo("Save", "Save ARM Clicked")
 
 
 class GUI(tk.Frame):
@@ -155,8 +169,7 @@ class GUI(tk.Frame):
                               command=lambda: messagebox.showinfo(
                                   "Save", "Save EER Clicked"))
         save_menu.add_command(label="Save ARM",
-                              command=lambda: messagebox.showinfo(
-                                  "Save", "Save ARM Clicked"))
+                              command=save_arm)
 
         # Transform Button
 

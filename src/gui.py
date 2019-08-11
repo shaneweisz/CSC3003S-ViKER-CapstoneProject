@@ -5,11 +5,62 @@ from tkinter.scrolledtext import ScrolledText
 import sys
 from arm_example import arm_example
 from arm import ARM_Attribute, ARM_Entity, ARM_Model
+import eer
 
 
 X_SIZE = 850
 Y_SIZE = 600
 FONT = 'Courier'
+
+eer_filename = "No EER file selected yet"
+arm_filename = "No ARM file selected yet"
+eer_model = None  # will store the currently loaded EER model
+arm_model = None  # will store the currently loaded ARM model
+eer_loaded = False
+arm_loaded = False
+
+
+def open_eer_file_picker():
+    global eer_filename
+    eer_filename = filedialog.askopenfilename(initialdir="/",
+                                              title="Select file",
+                                              filetypes=(
+                                                  ("xml files", "*.xml"),
+                                                  ("all files", "*.*")))
+    if eer_filename != "":
+        global eer_model
+        global eer_loaded
+        global arm_loaded
+        gui.txt_eer.delete("1.0", tk.END)  # clear the text from start to end
+        gui.txt_arm.delete("1.0", tk.END)  # clear the text from start to end
+        ### WILL PRINT TO STRING OF EER HERE INSTEAD###
+        gui.txt_eer.insert(tk.END, "File Directory Selected:\n{}".format(eer_filename))
+        eer_model = eer.EER()
+        eer_model.load_eer(eer_filename)
+        eer_loaded = True
+        arm_loaded = False
+        gui.btn_transform.config(text="Transform to ARM")
+        gui.btn_transform.config(state="normal")
+
+
+def open_arm_file_picker():
+    global arm_filename
+    arm_filename = filedialog.askopenfilename(initialdir="/",
+                                              title="Select file",
+                                              filetypes=(
+                                                  ("xml files", "*.xml"),
+                                                  ("all files", "*.*")))
+    messagebox.showinfo("Load", "File Directory Selected:\n{}".format(arm_filename))
+
+
+def transform():
+    if eer_loaded:
+        arm_model = eer_model.transform_to_arm()
+        gui.txt_arm.insert(tk.END, arm_model.__str__())
+        gui.btn_transform.config(text="Transform")
+        gui.btn_transform.config(state="disabled")
+    elif arm_loaded:
+        pass
 
 
 class GUI(tk.Frame):
@@ -87,33 +138,27 @@ class GUI(tk.Frame):
         root_menu = tk.Menu(self.window)
         self.window.config(menu=root_menu)
 
-        def open_file_picker():
-            filename = filedialog.askopenfilename(initialdir="/",
-                                                  title="Select file",
-                                                  filetypes=(
-                                                      ("xml files", "*.xml"),
-                                                      ("all files", "*.*")))
-            messagebox.showinfo("Load", "File Directory Selected:\n{}".format(filename))
-
         load_menu = tk.Menu(root_menu)
         root_menu.add_cascade(label="Load", menu=load_menu)
-        load_menu.add_command(label="Load ARM", command=open_file_picker)
-        load_menu.add_command(label="Load EER", command=open_file_picker)
+        load_menu.add_command(label="Load EER", command=open_eer_file_picker)
+        load_menu.add_command(label="Load ARM", command=open_arm_file_picker)
 
         save_menu = tk.Menu(root_menu)
         root_menu.add_cascade(label="Save", menu=save_menu)
-        save_menu.add_command(label="Save ARM",
-                              command=lambda: messagebox.showinfo(
-                                  "Save", "Save ARM Clicked"))
         save_menu.add_command(label="Save EER",
                               command=lambda: messagebox.showinfo(
                                   "Save", "Save EER Clicked"))
+        save_menu.add_command(label="Save ARM",
+                              command=lambda: messagebox.showinfo(
+                                  "Save", "Save ARM Clicked"))
 
         # Transform Button
 
-        btn_transform = tk.Button(self.window, text="Transform", font=(FONT, 20))
+        self.btn_transform = tk.Button(self.window, text="Transform",
+                                       font=(FONT, 20), command=transform)
+        self.btn_transform.config(state='disabled')
         self.window.grid_rowconfigure(8, minsize=20)
-        btn_transform.grid(row=9, column=2, columnspan=3, sticky='ew')
+        self.btn_transform.grid(row=9, column=2, columnspan=3, sticky='ew')
 
         # Help Button
         help_msg = "1. Click the Load Menu Item to load a EER or ARM XML file.\n"
@@ -134,7 +179,5 @@ class GUI(tk.Frame):
         btn_exit.grid(row=0, column=8)
 
 
-if __name__ == "__main__":
-    gui = GUI(tk.Tk())
-    gui.txt_arm.insert(tk.END, arm_example())  # END for appending
-    gui.window.mainloop()
+gui = GUI(tk.Tk())
+gui.window.mainloop()

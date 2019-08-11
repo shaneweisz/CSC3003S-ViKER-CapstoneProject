@@ -9,6 +9,6 @@ The tool has been made accessible for a user in the form of a well-designed user
 
 ## 2. Example Usage
 
-### ARM Model Examples
+### GUI
 
-Run `python3 arm_example.py` from within the src folder for an example that creates and instantiates a basic ARM Model for Movies and Actors.
+Run `python3 gui.py` from within the src folder. The GUI should be intuitive and easy-to-use.

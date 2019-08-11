@@ -40,6 +40,9 @@ def open_eer_file_picker():
         arm_loaded = False
         gui.btn_transform.config(text="Transform to ARM")
         gui.btn_transform.config(state="normal")
+    else:
+        # User clicked cancel
+        eer_filename = "No EER file selected yet"
 
 
 def open_arm_file_picker():
@@ -49,7 +52,11 @@ def open_arm_file_picker():
                                               filetypes=(
                                                   ("xml files", "*.xml"),
                                                   ("all files", "*.*")))
-    messagebox.showinfo("Load", "File Directory Selected:\n{}".format(arm_filename))
+    if arm_filename != "":
+        messagebox.showinfo("Load", "File Directory Selected:\n{}".format(arm_filename))
+    else:
+        # User clicked cancel
+        arm_filename = "No ARM file selected yet"
 
 
 def transform():
@@ -59,7 +66,7 @@ def transform():
         gui.btn_transform.config(text="Transform")
         gui.btn_transform.config(state="disabled")
     elif arm_loaded:
-        pass
+        pass  # TO DO: Implement transform from ARM to EER
 
 
 class GUI(tk.Frame):
@@ -178,5 +185,6 @@ class GUI(tk.Frame):
         btn_exit.grid(row=0, column=8)
 
 
+# Run the GUI
 gui = GUI(tk.Tk())
 gui.window.mainloop()

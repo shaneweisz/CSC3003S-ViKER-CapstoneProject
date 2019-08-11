@@ -157,14 +157,21 @@ class EER:
 
         return arm_model
 
-    def save_to_xml(self):
+    def __str__(self):
         """
-        TO DO
+        A textual representation of the ARM Model.
         """
-
+        str_repr = "EER Model:"
+        underline = "\n" + "-"*len(str_repr) + "\n"  # to underline 'EER Model'
+        str_repr += underline
+        str_repr += "\n".join(ent.__str__() for ent in self.eer_entities)
+        str_repr += "\n"
+        str_repr += "\n".join(rel.__str__() for rel in self.eer_relationships)
+        return str_repr
 
 class EER_Relationship:
     """
+    A class used to represent an EER Relationship
     """
     def __init__(self, name):
         self.name = name
@@ -188,6 +195,11 @@ class EER_Relationship:
     def get_mult2(self):
         return self.mult2
 
+    def __str__(self):
+        result = self.name + ' [RELATIONSHIP]\n'
+        result += self.entity1 + " " + "(" + self.mult1 + ")\n"
+        result += self.entity2 + " " + "(" + self.mult2 + ")\n"
+        return result
 
 class EER_Entity:
     """
@@ -237,6 +249,14 @@ class EER_Entity:
     def get_attributes(self):
         return self.attributes
 
+    def __str__(self): #needs to be restructured to allow for more than one primary key
+        result = self.name + " [ENTITY]\n"
+        for key in self.primary_keys:
+            result += key.name + " [pk]\n"
+            for attr in self.attributes:
+                if(not attr.name == key.name):
+                    result += attr.name + " [attr]\n"
+        return result
 
 class EER_Attribute:
     """

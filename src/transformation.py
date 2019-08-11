@@ -42,25 +42,24 @@ def transform_to_arm(self):
              EER model given by `self`.
     """
     arm = ARM()        # will store the new ARM model
-    arm_entities = []  # the entities that will compose the ARM model
 
     # Create the relations for entities
-    for entity in self.entities:
+    for eer_entity in self.entities:
         # STEP A - Table Declaration
 
-        name = entity.get_name()
+        name = eer_entity.get_name()
         arm_entity = ARM_Entity(name)  # construct a new ARM entity e.g "Movie"
         arm_entity.add_attribute("self", "OID")
-        for attr_name in entity.get_attributes():
-            arm_attr = new ARM_Attribute(attr_name, "anyType")
+        for eer_attr in eer_entity.get_attributes():
+            arm_attr = new ARM_Attribute(eer_attr.get_name(), "anyType")
             arm_entity.add_attribute(arm_attr)  # e.g "Runtime (anyType)"
 
         # STEP B - Foreign Keys - done in the relationships section below
 
         # STEP C - Primary Key
-        pk = entity.get_primary_key()
+        pk = eer_entity.get_primary_key()
         arm_entity.add_constraint(PK_Constraint("self"))  # e.g. "MovieID", and recall arm's primary key is a list # noqa
-        arm_entity.add_constraint(Pathfd_Constraint(entity.get_primary_key(), "self"))
+        arm_entity.add_constraint(Pathfd_Constraint(eer_entity.get_primary_key(), "self"))
         arm.add_arm_entity(arm_entity)
 
     # Create the relations for relationships
@@ -68,18 +67,19 @@ def transform_to_arm(self):
         name = relationship.get_name()
         entity1 = relationship.get_entity1()
         entity2 = relationship.get_entity2()
-        mult1 = relationship.get_multiplicity1()
-        mult2 = relationship.get_multiplicity2()
+        mult1 = relationship.get_mult1()
+        mult2 = relationship.get_mult2()
 
         if (mult1 == "1" and mult2 == "1") or (mult1 == "n" and mult2 == "1"):
             # Then one to one, or many-to-one relationship
             # No need for a new relation - just add foreign key to first entity
 
             # Find the ARM_Entity object corresponding to the name entity1
+            # This corresponds to the `n` side of the many-to-one relationship
             victim_entity = "placeholder"
             for ent in arm_entities:
                 if ent.get_name() == entity1:
-                    victim_entity = ent
+                    victim_entity = ent  # found the ARM entity to add the foreign key to
 
             assert victim_entity != "placeholder"  # checking a victim entity has been found
             # Add foreign key - the name of the other entity
@@ -90,6 +90,7 @@ def transform_to_arm(self):
             # Add foreign key to the entity on the n side of the relationship
 
             # Find the ARM_Entity object corresponding to the name entity2
+            # This corresponds to the `n` side of the one-to-many relationship
             victim_entity = "placeholder"
             for ent in arm_entities:
                 if ent.get_name() == entity2:

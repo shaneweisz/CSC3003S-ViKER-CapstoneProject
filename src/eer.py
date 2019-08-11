@@ -30,7 +30,7 @@ class EER:
         Relationships must be added with the `add_eer_relationship()` method.
         """
         self.eer_entities = []
-        # self.eer_relations = []
+        self.eer_relations = []
 
     def add_eer_entity(self, new_eer_entity):
         """
@@ -44,22 +44,21 @@ class EER:
         assert type(new_eer_entity) == EER_Entity
         self.eer_entities.append(new_eer_entity)
 
-    #Relationship code, to be implemented
-    # def add_eer_relationship(self, new_eer_relationship):
-    #     """
-    #     Adds an EER_Relationship to the model.
-    #
-    #     Raises:
-    #         AssertionError:
-    #             if `new_eer_relationship` supplied is not of type `EER_Relationship`
-    #     """
-    #     assert type(new_eer_relationship) == EER_Relationship
-    #     self.eer_entities.append(new_eer_entity)
+    def add_eer_relationship(self, new_eer_relationship):
+        """
+        Adds an EER_Relationship to the model.
+
+        Raises:
+            AssertionError:
+                if `new_eer_relationship` supplied is not of type `EER_Relationship`
+        """
+        assert type(new_eer_relationship) == EER_Relationship
+        self.eer_relations.append(new_eer_relationship)
 
 
     def load_eer(self, filename='../EER_XML_Schema/demo.xml'):
         """
-        TO DO
+        Loads and EER model from an XML file into a python object representation
         """
         tree = ET.parse(filename)
         root = tree.getroot()
@@ -72,13 +71,18 @@ class EER:
                 num_attributes = len(root[i])
                 for j in range(num_attributes):
                     entity.add_attribute(EER_Attribute(root[i][j].text))
+                    if(root[i][j].attrib["type"] == 'pk'):
+                        entity.add_primary_key(EER_Attribute(root[i][j].text))
                 self.add_eer_entity(entity)
 
-            #Relationship code, to be implemented
-            # if(root[i].attrib["type"] == "Relationship"):
-            #     print("\nRelationship:", root[i].attrib["name"])
-            #     for j in range(2): #Loop through 2 multiplicities
-            #         print("Multiplicity:", root[i][j].attrib["multiplicity"], root[i][j].text)
+
+            if(root[i].attrib["type"] == "Relationship"):
+                relation = EER_Relationship(root[i].attrib["name"])
+                relation.entity1 = root[i][0].text
+                relation.mult1 = root[i][0].attrib["multiplicity"]
+                relation.entity2 = root[i][1].text
+                relation.mult2 = root[i][1].attrib["multiplicity"]
+                self.add_eer_relationship(relation)
 
     def transform_to_arm(self):
         """
@@ -89,10 +93,32 @@ class EER:
         TO DO
         """
 
-#Relationship code, to be implemented
-# class EER_Relationship:
-#     """
-#     """
+
+class EER_Relationship:
+    """
+    """
+    def __init__(self, name):
+        self.name = name
+        self.entity1=""
+        self.entity2=""
+        self.mult1=""
+        self.mult2=""
+
+    def get_name(self):
+        return self.name
+
+    def get_entity1(self):
+        return self.entity1
+
+    def get_entity2(self):
+        return self.entity2
+
+    def get_mult1(self):
+        return self.mult1
+
+    def get_mult2(self):
+        return self.mult2
+
 
 class EER_Entity:
     """
@@ -130,6 +156,18 @@ class EER_Entity:
     def add_attribute(self, attribute):
         self.attributes.append(attribute)
 
+    def add_primary_key(self, primary_key):
+        self.primary_keys.append(primary_key)
+
+    def get_name(self):
+        return self.name
+
+    def get_primary_key(self):
+        return self.primary_keys
+
+    def get_attributes(self):
+        return self.attributes
+
 
 class EER_Attribute:
     """
@@ -159,3 +197,6 @@ class EER_Attribute:
         self.multi_valued = multi_valued
         self.derived = derived
         self.optional = optional
+
+    def get_name(self):
+        return self.name

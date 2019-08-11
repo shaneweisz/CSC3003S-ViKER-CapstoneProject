@@ -1,19 +1,19 @@
 <eer>
 
 	<entity name="Professor" type="Entity">
-		<attribute type="pk"> "pid" </attribute>
-		<attribute type="attr"> "pname" </attribute>
-		<attribute type="attr"> "office" </attribute>
+		<attribute type="pk">pid</attribute>
+		<attribute type="attr">pname</attribute>
+		<attribute type="attr">office</attribute>
 	</entity>
 
 	<entity name="Department" type="Entity">
-		<attribute type="pk"> "dcode" </attribute>
-		<attribute type="attr"> "dname" </attribute>
+		<attribute type="pk">dcode</attribute>
+		<attribute type="attr">dname</attribute>
 	</entity>
 
 	<relationship name="WORK" type="Relationship">
-		<entityName multiplicity="n"> "Professor" </entityName>
-		<entityName multiplicity="1"> "Department" </entityName>
+		<entityName multiplicity="n">Professor</entityName>
+		<entityName multiplicity="1">Department</entityName>
 	</relationship>
 
 </eer>

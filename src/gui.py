@@ -33,10 +33,9 @@ def open_eer_file_picker():
         global arm_loaded
         gui.txt_eer.delete("1.0", tk.END)  # clear the text from start to end
         gui.txt_arm.delete("1.0", tk.END)  # clear the text from start to end
-        ### WILL PRINT TO STRING OF EER HERE INSTEAD###
-        gui.txt_eer.insert(tk.END, "File Directory Selected:\n{}".format(eer_filename))
         eer_model = eer.EER()
         eer_model.load_eer(eer_filename)
+        gui.txt_eer.insert(tk.END, eer_model.__str__())
         eer_loaded = True
         arm_loaded = False
         gui.btn_transform.config(text="Transform to ARM")

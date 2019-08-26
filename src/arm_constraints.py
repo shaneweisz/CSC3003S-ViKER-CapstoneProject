@@ -56,11 +56,11 @@ class FK_Constraint(Constraint):
 
     def get_fk(self):
         """Getter for the foreign key."""
-        return self.pk
+        return self.fk
 
     def get_references(self):
         """Getter for the table the fk references."""
-        return self.pk
+        return self.references
 
     def __str__(self):
         """
@@ -90,14 +90,14 @@ class Pathfd_Constraint(Constraint):
         """Getter for the attribues."""
         return self.attributes
 
-    def get_references(self):
+    def get_target(self):
         """Getter for the target."""
         return self.target
 
     def __str__(self):
         """
         String representation of the pathfd constraint.
-        e.g. 'pathdf (pnum) -> self'
+        e.g. 'pathfd (pnum) -> self'
         """
         attr_str = ", ".join(self.attributes)
         return "pathfd ({}) -> {}".format(attr_str, self.target)

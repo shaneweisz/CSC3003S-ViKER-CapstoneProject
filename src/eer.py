@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import arm
-import constraints
+import arm_constraints
+
 
 class EER:
     """
@@ -57,7 +58,6 @@ class EER:
         assert type(new_eer_relationship) == EER_Relationship
         self.eer_relationships.append(new_eer_relationship)
 
-
     def load_eer(self, filename='../EER_XML_Schema/demo.xml'):
         """
         Loads and EER model from an XML file into a python object representation
@@ -76,7 +76,6 @@ class EER:
                     if(root[i][j].attrib["type"] == 'pk'):
                         entity.add_primary_key(EER_Attribute(root[i][j].text))
                 self.add_eer_entity(entity)
-
 
             if(root[i].attrib["type"] == "Relationship"):
                 relation = EER_Relationship(root[i].attrib["name"])
@@ -110,8 +109,9 @@ class EER:
 
             # STEP C - Primary Key
             pk = eer_entity.get_primary_key()
-            arm_entity.add_constraint(constraints.PK_Constraint("self"))  # e.g. "MovieID", and recall arm's primary key is a list # noqa
-            arm_entity.add_constraint(constraints.Pathfd_Constraint((pk.get_name() for pk in eer_entity.get_primary_key()), "self"))
+            arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))  # e.g. "MovieID", and recall arm's primary key is a list # noqa
+            arm_entity.add_constraint(arm_constraints.Pathfd_Constraint(
+                (pk.get_name() for pk in eer_entity.get_primary_key()), "self"))
             arm_model.add_arm_entity(arm_entity)
 
         # Create the relations for relationships
@@ -136,7 +136,7 @@ class EER:
                 assert victim_entity != "placeholder"  # checking a victim entity has been found
                 # Add foreign key - the name of the other entity
                 victim_entity.add_attribute(arm.ARM_Attribute(entity2, "OID"))
-                victim_entity.add_constraint(constraints.FK_Constraint(entity2, entity2))
+                victim_entity.add_constraint(arm_constraints.FK_Constraint(entity2, entity2))
             elif mult1 == "1" and mult2 == "n":
                 # One-to-many relationship
                 # Add foreign key to the entity on the n side of the relationship
@@ -169,16 +169,18 @@ class EER:
         str_repr += "\n".join(rel.__str__() for rel in self.eer_relationships)
         return str_repr
 
+
 class EER_Relationship:
     """
     A class used to represent an EER Relationship
     """
+
     def __init__(self, name):
         self.name = name
-        self.entity1=""
-        self.entity2=""
-        self.mult1=""
-        self.mult2=""
+        self.entity1 = ""
+        self.entity2 = ""
+        self.mult1 = ""
+        self.mult2 = ""
 
     def get_name(self):
         return self.name
@@ -201,6 +203,7 @@ class EER_Relationship:
         result += self.entity2 + " " + "(" + self.mult2 + ")\n"
         return result
 
+
 class EER_Entity:
     """
     A class used to represent an EER Entity
@@ -219,6 +222,7 @@ class EER_Entity:
     weak : bool
         If it is a weak EER entity
     """
+
     def __init__(self, name, weak=False):
         """
         Args:
@@ -249,7 +253,7 @@ class EER_Entity:
     def get_attributes(self):
         return self.attributes
 
-    def __str__(self): #needs to be restructured to allow for more than one primary key
+    def __str__(self):  # needs to be restructured to allow for more than one primary key
         result = self.name + " [ENTITY]\n"
         for key in self.primary_keys:
             result += key.name + " [pk]\n"
@@ -257,6 +261,7 @@ class EER_Entity:
                 if(not attr.name == key.name):
                     result += attr.name + " [attr]\n"
         return result
+
 
 class EER_Attribute:
     """

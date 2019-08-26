@@ -1,4 +1,4 @@
-import constraints
+import arm_constraints
 
 
 class ARM_Model:
@@ -112,19 +112,8 @@ class ARM_Entity:
             AssertionError:
                 if `new_constraint` supplied is not of type `Constraint`
         """
-        assert isinstance(new_constraint, constraints.Constraint)
+        assert isinstance(new_constraint, arm_constraints.Constraint)
         self.constraints.append(new_constraint)
-
-    def add_primary_key(self, new_primary_key):
-        """Adds one of the entity's attributes to its primary key.
-
-        Raises:
-            AssertionError:
-                if `new_primary_key` supplied is not the `name` of one of this
-                entity's attributes
-        """
-        assert new_primary_key in [attr.get_name() for attr in self.attributes]
-        self.primary_key.append(new_primary_key)
 
     def get_name(self):
         """Getter for name."""
@@ -153,7 +142,7 @@ class ARM_Entity:
                 primary key (self)'
         """
         str_repr = "{}:\n".format(self.name)
-        str_repr += "   Attributes:\n"
+        str_repr += "  Attributes:\n"
         for attr in self.attributes:
             str_repr += "      {}\n".format(attr.__str__())
         str_repr += "  Constraints:\n"

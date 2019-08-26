@@ -1,5 +1,5 @@
 from arm import ARM_Model, ARM_Entity, ARM_Attribute
-from constraints import PK_Constraint, FK_Constraint, Pathfd_Constraint
+from arm_constraints import PK_Constraint, FK_Constraint, Pathfd_Constraint
 
 
 def arm_example():

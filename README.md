@@ -9,6 +9,14 @@ The tool has been made accessible for a user in the form of a well-designed user
 
 ## 2. Example Usage
 
-### GUI
+### Run the Application
 
-Run `python3 gui.py` from within the src folder. The GUI should be intuitive and easy-to-use.
+Run `make run` from within the base folder. The GUI should be intuitive and easy-to-use.
+
+### View the static GUI
+
+Run `make gui` from within the base folder.
+
+### Remove all saved transformation outputs
+
+Run `make clean` from within the base folder.  

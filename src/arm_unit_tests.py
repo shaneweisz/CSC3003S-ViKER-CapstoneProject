@@ -23,8 +23,9 @@ class Tests(unittest2.TestCase):
         self.assertEqual(pk_constraint.get_pk(), "self", "Should be self")
 
         # Test FK_Constraint()
-        fk_constraint = arm_constraints.FK_Constraint("dept", "Department")
-        self.assertEqual(fk_constraint.get_fk(), "dept", "Should be dept")
+        fk_constraint = arm_constraints.FK_Constraint("dept", "department", "Department")
+        self.assertEqual(fk_constraint.get_name(), "dept", "Should be dept")
+        self.assertEqual(fk_constraint.get_fk(), "department", "Should be department")
         self.assertEqual(fk_constraint.get_references(), "Department",
                          "Should be Department")
 
@@ -50,12 +51,10 @@ class Tests(unittest2.TestCase):
                          "Should be INT")
 
         # Test add_constraint()
-        fk_constraint = arm_constraints.FK_Constraint("dept", "Department")
-        ent.add_constraint(fk_constraint)
-        self.assertEqual(ent.get_constraints()[0].get_fk(), "dept",
-                         "Should be dept")
-        self.assertEqual(ent.get_constraints()[0].get_references(),
-                         "Department", "Should be Department")
+        pk_constraint = arm_constraints.PK_Constraint("self")
+        ent.add_constraint(pk_constraint)
+        self.assertEqual(ent.get_constraints()[0].get_pk(), "self",
+                         "Should be self")
 
     def test_ARM_Model(self):
         # Test add_arm_entity()

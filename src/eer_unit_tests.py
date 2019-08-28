@@ -51,7 +51,7 @@ class Tests(unittest2.TestCase):
                          "Department", "Should be Department")
         self.assertEqual(EER.eer_relationships[0].get_mult1(), "n", "Should be n")
         self.assertEqual(EER.eer_relationships[0].get_mult2(), "1", "Should be 1")
-        print(EER)
+        # print(EER)
 
 
 if __name__ == '__main__':

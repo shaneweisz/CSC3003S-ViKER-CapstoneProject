@@ -18,8 +18,7 @@ class ARM_Model:
     transform_to_eer():
         Applies the set of transformation rules for ARM to EER.
     save_to_xml():
-        Saves the ARM model object as an XML file
-
+        Saves the ARM model object as an XML file.
     """
 
     def __init__(self):

@@ -58,7 +58,7 @@ class EER_Model:
         assert type(new_eer_relationship) == EER_Relationship
         self.eer_relationships.append(new_eer_relationship)
 
-    def load_eer(self, filename='../EER_XML_Schema/demo.xml'):
+    def load_eer(self, filename='EER_XML_Schema/demo.xml'):
         """
         Loads and EER model from an XML file into a python object representation
         """
@@ -135,8 +135,10 @@ class EER_Model:
 
                 assert victim_entity != "placeholder"  # checking a victim entity has been found
                 # Add foreign key - the name of the other entity
-                victim_entity.add_attribute(arm.ARM_Attribute(entity2, "OID"))
-                victim_entity.add_constraint(arm_constraints.FK_Constraint(entity2, entity2))
+                fk_name = entity2.lower()
+                victim_entity.add_attribute(arm.ARM_Attribute(fk_name, "OID"))
+                victim_entity.add_constraint(
+                    arm_constraints.FK_Constraint(fk_name, fk_name, entity2))
             elif mult1 == "1" and mult2 == "n":
                 # One-to-many relationship
                 # Add foreign key to the entity on the n side of the relationship
@@ -150,8 +152,9 @@ class EER_Model:
 
                 assert victim_entity != "placeholder"  # checking a victim entity has been found
                 # Add foreign key - the name of the other entity
-                victim_entity.add_attribute(arm.ARM_Attribute(entity1, "OID"))
-                victim_entity.add_constraint(constraints.FK_Constraint(entity1, entity1))
+                fk_name = entity1.lower()
+                victim_entity.add_attribute(arm.ARM_Attribute(fk_name, "OID"))
+                victim_entity.add_constraint(constraints.FK_Constraint(fk_name, fk_name, entity1))
             else:
                 pass
 

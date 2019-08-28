@@ -10,16 +10,23 @@ class Controller():
     """
     A Controller class (as part of the MVC framework) used to manage the
     interaction between the user and the model.
+
+    Instantiated with a view object that has the following components:
+        1) A `txt_eer` text widget
+        2) A `txt_arm` text widget
+        3) A `btn_transform` button
+        4) A `load_menu` menu item
+        4) A `save_menu` menu item
     """
 
-    def __init__(self, gui):
+    def __init__(self, view):
         self.eer_filename = "No EER file selected yet"
         self.arm_filename = "No ARM file selected yet"
         self.eer_model = None  # will store the currently loaded EER model
         self.arm_model = None  # will store the currently loaded ARM model
         self.eer_loaded = False
         self.arm_loaded = False
-        self.gui = gui
+        self.gui = view
         self.gui.load_menu.entryconfigure(0, command=self.open_eer_file_picker)
         self.gui.load_menu.entryconfigure(1, command=self.open_arm_file_picker)
         self.gui.save_menu.entryconfigure(0, command=self.save_EER)
@@ -54,7 +61,9 @@ class Controller():
                                                    ("xml files", "*.xml"),
                                                    ("all files", "*.*")))
         if self.arm_filename != "":
-            messagebox.showinfo("Load", "File Directory Selected:\n{}".format(self.arm_filename))
+            messagebox.showinfo("Load",
+                                "File Directory Selected:\n{}"
+                                .format(self.arm_filename))
         else:
             # User clicked cancel
             self.arm_filename = "No ARM file selected yet"

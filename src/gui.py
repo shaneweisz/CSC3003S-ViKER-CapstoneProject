@@ -2,85 +2,10 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
-import sys
-from arm_example import arm_example
-from arm import ARM_Attribute, ARM_Entity, ARM_Model
-import eer
-
 
 X_SIZE = 850
 Y_SIZE = 600
 FONT = 'Courier'
-
-eer_filename = "No EER file selected yet"
-arm_filename = "No ARM file selected yet"
-eer_model = None  # will store the currently loaded EER model
-arm_model = None  # will store the currently loaded ARM model
-eer_loaded = False
-arm_loaded = False
-
-
-def open_eer_file_picker():
-    global eer_filename
-    eer_filename = filedialog.askopenfilename(initialdir="/",
-                                              title="Select file",
-                                              filetypes=(
-                                                  ("xml files", "*.xml"),
-                                                  ("all files", "*.*")))
-    if eer_filename != "":
-        global eer_model
-        global eer_loaded
-        global arm_loaded
-        gui.txt_eer.delete("1.0", tk.END)  # clear the text from start to end
-        gui.txt_arm.delete("1.0", tk.END)  # clear the text from start to end
-        eer_model = eer.EER()
-        eer_model.load_eer(eer_filename)
-        gui.txt_eer.insert(tk.END, eer_model.__str__())
-        eer_loaded = True
-        arm_loaded = False
-        gui.btn_transform.config(text="Transform to ARM")
-        gui.btn_transform.config(state="normal")
-    else:
-        # User clicked cancel
-        eer_filename = "No EER file selected yet"
-
-
-def open_arm_file_picker():
-    global arm_filename
-    arm_filename = filedialog.askopenfilename(initialdir="/",
-                                              title="Select file",
-                                              filetypes=(
-                                                  ("xml files", "*.xml"),
-                                                  ("all files", "*.*")))
-    if arm_filename != "":
-        messagebox.showinfo("Load", "File Directory Selected:\n{}".format(arm_filename))
-    else:
-        # User clicked cancel
-        arm_filename = "No ARM file selected yet"
-
-
-def transform():
-    if eer_loaded:
-        global arm_model
-        arm_model = eer_model.transform_to_arm()
-        gui.txt_arm.insert(tk.END, arm_model.__str__())
-        gui.btn_transform.config(text="Transform")
-        gui.btn_transform.config(state="disabled")
-        global arm_loaded
-        arm_loaded = True
-    elif arm_loaded:
-        pass  # TO DO: Implement transform from ARM to EER
-
-
-def save_arm():
-    if arm_loaded:
-        new_filename = eer_filename[:-4] + "_transformed.txt"
-        f = open(new_filename, "w")
-        f.write(arm_model.__str__())
-        f.close()
-        messagebox.showinfo("Save", "ARM Transformation Output Saved ")
-    else:
-        messagebox.showinfo("Save", "Save ARM Clicked")
 
 
 class GUI(tk.Frame):
@@ -95,6 +20,9 @@ class GUI(tk.Frame):
         A text widget for displaying the EER Model
     txt_arm : tk.Text
         A text widget for displaying the ARM Model
+    load_menu :
+    save_menu :
+    btn_transform :
     '''
 
     def __init__(self, parent, *args, **kwargs):
@@ -154,35 +82,31 @@ class GUI(tk.Frame):
         self.window.grid_columnconfigure(3, minsize=50)
 
         # Menu for Loading and Saving
-
         root_menu = tk.Menu(self.window)
         self.window.config(menu=root_menu)
 
-        load_menu = tk.Menu(root_menu)
-        root_menu.add_cascade(label="Load", menu=load_menu)
-        load_menu.add_command(label="Load EER", command=open_eer_file_picker)
-        load_menu.add_command(label="Load ARM", command=open_arm_file_picker)
+        self.load_menu = tk.Menu(root_menu)
+        root_menu.add_cascade(label="Load", menu=self.load_menu)
+        self.load_menu.add_command(label="Load EER")
+        self.load_menu.add_command(label="Load ARM")
 
-        save_menu = tk.Menu(root_menu)
-        root_menu.add_cascade(label="Save", menu=save_menu)
-        save_menu.add_command(label="Save EER",
-                              command=lambda: messagebox.showinfo(
-                                  "Save", "Save EER Clicked"))
-        save_menu.add_command(label="Save ARM",
-                              command=save_arm)
+        self.save_menu = tk.Menu(root_menu)
+        root_menu.add_cascade(label="Save", menu=self.save_menu)
+        self.save_menu.add_command(label="Save EER")
+        self.save_menu.add_command(label="Save ARM")
 
         # Transform Button
-
         self.btn_transform = tk.Button(self.window, text="Transform",
-                                       font=(FONT, 20), command=transform)
+                                       font=(FONT, 20))
         self.btn_transform.config(state='disabled')
         self.window.grid_rowconfigure(8, minsize=20)
         self.btn_transform.grid(row=9, column=2, columnspan=3, sticky='ew')
 
         # Help Button
         help_msg = "1. Click the Load Menu Item to load a EER or ARM XML file.\n"
-        help_msg += "2. Click the Save Menu Item to save a transformed model.\n"
-        help_msg += "3. Consult the External Help PDF for further assistance."
+        help_msg += "2. Consult the Transform Button to transform a loaded model.\n"
+        help_msg += "3. Click the Save Menu Item to save a transformed model.\n"
+        help_msg += "4. Consult the External Help PDF for further assistance."
         btn_help = tk.Button(self.window, text="?", fg="blue",
                              command=lambda: messagebox.showinfo("Help", help_msg))
         btn_help.config(font=(FONT, 14))
@@ -198,6 +122,7 @@ class GUI(tk.Frame):
         btn_exit.grid(row=0, column=8)
 
 
-# Run the GUI
-gui = GUI(tk.Tk())
-gui.window.mainloop()
+# View the GUI
+if __name__ == '__main__':
+    gui = GUI(tk.Tk())
+    gui.window.mainloop()

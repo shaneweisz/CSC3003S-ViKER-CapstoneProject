@@ -3,7 +3,7 @@ import arm
 import arm_constraints
 
 
-class EER:
+class EER_Model:
     """
     A class used to represent an EER Model in its entirity - a list of
     EER_Entity, EER_Relationship objects and appropriate methods.

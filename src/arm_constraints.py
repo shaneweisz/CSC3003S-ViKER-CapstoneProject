@@ -79,6 +79,83 @@ class FK_Constraint(Constraint):
                                                                      self.references)
 
 
+class Inheritance_Constraint(Constraint):
+    """
+    A class used to represent an inheritance constraint in an ARM_Entity.
+
+    Attributes
+    ----------
+    parent : str
+        The name of the parent entity
+    """
+
+    def __init__(self, parent):
+        self.parent = parent
+
+    def get_parent(self):
+        """Getter for the parent."""
+        return self.parent
+
+    def __str__(self):
+        """
+        String representation of the inheritance constraint.
+        e.g. 'isa Person'
+        """
+        return "isa {}".format(self.parent)
+
+
+class Cover_Constraint(Constraint):
+    """
+    A class used to represent a cover constraint in an ARM_Entity.
+
+    Attributes
+    ----------
+    covered_by : list of str
+        The name of the entities that this entity is covered by.
+    """
+
+    def __init__(self, covered_by):
+        self.covered_by = covered_by
+
+    def get_covered_by(self):
+        """Getter for the covered_by."""
+        return self.covered_by
+
+    def __str__(self):
+        """
+        String representation of the cover constraint.
+        e.g. 'covered by (Student, Lecturer)'
+        """
+        cov_str = ", ".join(self.covered_by)
+        return "covered by ({})".format(cov_str)
+
+
+class Disjointness_Constraint(Constraint):
+    """
+    A class used to represent a disjointess constraint in an ARM_Entity.
+
+    Attributes
+    ----------
+    disjoint_with : list of str
+        The name of the entities that this entity is disjoint with.
+    """
+
+    def __init__(self, disjoint_with):
+        self.disjoint_with = disjoint_with
+
+    def get_disjoint_with(self):
+        """Getter for the disjoint_with."""
+        return self.disjoint_with
+
+    def __str__(self):
+        """
+        String representation of the disjointness constraint.
+        e.g. 'disjoint with (Student, Lecturer)'
+        """
+        dis_str = ", ".join(self.disjoint_with)
+        return "disjoint with ({})".format(dis_str)
+
+
 class Pathfd_Constraint(Constraint):
     """
     A class used to represent a pathfd constraint in an ARM_Entity.

@@ -29,6 +29,23 @@ class Tests(unittest2.TestCase):
         self.assertEqual(fk_constraint.get_references(), "Department",
                          "Should be Department")
 
+        # Test Inheritance_Constraint()
+        inher_constraint = arm_constraints.Inheritance_Constraint("Person")
+        self.assertEqual(inher_constraint.get_parent(), "Person",
+                         "Should be Person")
+
+        # Test Cover_Constraint()
+        covered_by = ["Student", "Lecturer"]
+        cover_constraint = arm_constraints.Cover_Constraint(covered_by)
+        self.assertEqual(cover_constraint.get_covered_by(), covered_by,
+                         "Should be [\"Student\", \"Lecturer\"]")
+
+        # Test Disjointness_Constraint()
+        disjoint_with = ["Student", "Lecturer"]
+        d_constraint = arm_constraints.Disjointness_Constraint(disjoint_with)
+        self.assertEqual(d_constraint.get_disjoint_with(), disjoint_with,
+                         "Should be [\"Student\", \"Lecturer\"]")
+
         # Test Pathfd_Constraint()
         pathfd_constraint = arm_constraints.Pathfd_Constraint(
             ["pnum, name"], "self")

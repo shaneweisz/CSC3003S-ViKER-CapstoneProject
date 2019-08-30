@@ -16,14 +16,12 @@ class EER_Model:
     eer_relationships : list of EER_Relationship
         The entities that together compose the relationships between the EER Model.
 
-    Methods
+    Core Methods
     -------
     load_eer():
         Populates the EER model object from an XML file
     transform_to_arm():
         Applies the set of transformation rules for EER to ARM.
-    save_to_xml():
-        Saves the EER model object as an XML file
     """
 
     def __init__(self):
@@ -33,8 +31,8 @@ class EER_Model:
         Entities must be added with the `add_eer_entity()` method.
         Relationships must be added with the `add_eer_relationship()` method.
         """
-        self.eer_entities = []
-        self.eer_relationships = []
+        self.__eer_entities = []
+        self.__eer_relationships = []
 
     def add_eer_entity(self, new_eer_entity):
         """
@@ -46,7 +44,7 @@ class EER_Model:
         """
 
         assert type(new_eer_entity) == EER_Entity
-        self.eer_entities.append(new_eer_entity)
+        self.__eer_entities.append(new_eer_entity)
 
     def add_eer_relationship(self, new_eer_relationship):
         """
@@ -57,7 +55,7 @@ class EER_Model:
                 if `new_eer_relationship` supplied is not of type `EER_Relationship`
         """
         assert type(new_eer_relationship) == EER_Relationship
-        self.eer_relationships.append(new_eer_relationship)
+        self.__eer_relationships.append(new_eer_relationship)
 
     def load_eer(self, filename='../EER_XML_Schema/demo.xml'):
         """
@@ -178,16 +176,24 @@ class EER_Model:
 
         return arm_model
 
+    def get_eer_entities(self):
+        """Returns the list of EER Entities contained in the model"""
+        return self.__eer_entities
+
+    def get_eer_relationships(self):
+        """Returns the list of EER Relationships contained in the model"""
+        return self.__eer_relationships
+
     def __str__(self):
         """
         A textual representation of the ARM Model.
         """
         str_repr = "EER Model:"
-        underline = "\n" + "-"*len(str_repr) + "\n"  # to underline 'EER Model'
-        str_repr += underline
-        str_repr += "\n".join(ent.__str__() for ent in self.eer_entities)
-        str_repr += "\n"
-        str_repr += "\n".join(rel.__str__() for rel in self.eer_relationships)
+        # underline = "\n" + "-"*len(str_repr) + "\n"  # to underline 'EER Model'
+        # str_repr += underline
+        # str_repr += "\n".join(ent.__str__() for ent in self.eer_entities)
+        # str_repr += "\n"
+        # str_repr += "\n".join(rel.__str__() for rel in self.eer_relationships)
         return str_repr
 
 

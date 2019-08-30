@@ -7,7 +7,7 @@ import unittest2
 class Tests(unittest2.TestCase):
 
     def test_EERAttribute(self):
-        # Test EER_Attribute()
+        #Test EER_Attribute()
         attribute = eer.EER_Attribute("name", False, False, True)
         self.assertEqual(attribute.get_name(), "name", "Should be name")
         self.assertEqual(attribute.is_multi_valued(), False, "Should be False")
@@ -15,7 +15,7 @@ class Tests(unittest2.TestCase):
         self.assertEqual(attribute.is_optional(), True, "Should be True")
 
     def test_EEREntity(self):
-        # Test EER_Entity()
+        #Test EER_Entity()
         entity = eer.EER_Entity("Professor", True)
         self.assertEqual(entity.get_name(), "Professor", "Should be Professor")
         #Test constructor and is_weak()
@@ -54,11 +54,20 @@ class Tests(unittest2.TestCase):
         self.assertEqual(relationship.is_weak(), True, "Should be True")
 
     def test_EER_Model(self):
-        # Test add_eer_entity()
+        #Test add_eer_entity() and get_eer_entities()
         EER = eer.EER_Model()
         entity = eer.EER_Entity("Professor")
         EER.add_eer_entity(entity)
-        self.assertEqual(EER.eer_entities[0].get_name(), "Professor", "Should be Professor")
+        self.assertEqual(EER.get_eer_entities()[0].get_name(), "Professor", "Should be Professor")
+        #Test add_eer_relationship() and get_eer_relationships()
+        relationship = eer.EER_Relationship("WORK", ("Professor", "n"), ("Department", "1"), True)
+        EER.add_eer_relationship(relationship)
+        self.assertEqual(EER.get_eer_relationships()[0].get_name(), "WORK", "Should be WORK")
+
+
+
+
+
 
     # def test_LoadEER(self):
     #     # Test load_eer()

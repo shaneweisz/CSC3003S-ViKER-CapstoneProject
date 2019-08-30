@@ -69,17 +69,32 @@ class Controller():
             self.arm_filename = "No ARM file selected yet"
 
     def save_EER(self):
-        messagebox.showinfo("Save", "Save EER Clicked")
+        if self.eer_loaded:
+            f = fd.asksaveasfile(initialdir="/",
+                                 title="Choose Name and Location to \
+                                           Save Transformation Output",
+                                 filetypes=(
+                                     ("text files", "*.txt"),
+                                     ("all files", "*.*")))
+            f.write(self.eer_model.__str__())
+            f.close()
+            messagebox.showinfo("Save", "EER Model Saved ")
+        else:
+            messagebox.showinfo("Warning", "No EER Model to save")
 
     def save_ARM(self):
         if self.arm_loaded:
-            new_filename = self.eer_filename[:-4] + "_transformed.txt"
-            f = open(new_filename, "w")
+            f = fd.asksaveasfile(initialdir="/",
+                                 title="Choose Name and Location to \
+                                           Save Transformation Output",
+                                 filetypes=(
+                                     ("text files", "*.txt"),
+                                     ("all files", "*.*")))
             f.write(self.arm_model.__str__())
             f.close()
-            messagebox.showinfo("Save", "ARM Transformation Output Saved ")
+            messagebox.showinfo("Save", "ARM Model Saved ")
         else:
-            messagebox.showinfo("Save", "Save ARM Clicked")
+            messagebox.showinfo("Warning", "No ARM model to save")
 
     def transform(self):
         if self.eer_loaded:

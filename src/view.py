@@ -127,8 +127,8 @@ class GUI(tk.Frame):
 
         # Help Button
         help_msg = "1. Click the Load Menu Item to load a EER or ARM XML file.\n"
-        help_msg += "2. Consult the Transform Button to transform a loaded model.\n"
-        help_msg += "3. Click the Save Menu Item to save a transformed model.\n"
+        help_msg += "2. Click the Transform Button to transform a loaded model.\n"
+        help_msg += "3. Click the Save Menu Item to save a model.\n"
         help_msg += "4. Consult the External Help PDF for further assistance."
         btn_help = tk.Button(self.window,
                              text="?",

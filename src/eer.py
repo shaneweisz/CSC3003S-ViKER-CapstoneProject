@@ -12,7 +12,7 @@ class EER_Model:
     ----------
     eer_entities : list of EER_Entity
         The entities that together compose the EER Model.
-    eer_relations : list of EER_Relationship
+    eer_relationships : list of EER_Relationship
         The entities that together compose the relationships between the EER Model.
 
     Methods
@@ -109,7 +109,7 @@ class EER_Model:
 
             # STEP C - Primary Key
             pk = eer_entity.get_primary_key()
-            arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))  # e.g. "MovieID", and recall arm's primary key is a list # noqa
+            arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))
             arm_entity.add_constraint(arm_constraints.Pathfd_Constraint(
                 (pk.get_name() for pk in eer_entity.get_primary_key()), "self"))
             arm_model.add_arm_entity(arm_entity)

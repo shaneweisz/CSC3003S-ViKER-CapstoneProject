@@ -36,7 +36,7 @@ class Identifier_Constraint(Constraint):
         String representation of the identifier constraint.
         e.g. 'identifier (self)'
         """
-        return "identifier ({})".format(self.__identifier)
+        return "Identifier Constraint: [identifier = {}]".format(self.__identifier)
 
 
 class Inheritance_Constraint(Constraint):
@@ -75,4 +75,4 @@ class Inheritance_Constraint(Constraint):
         String representation of the inheritance constraint.
         e.g. 'isa Person'
         """
-        return "isa {}".format(self.__parent)
+        return "Inheritance Constraint: [parent = {}] [disjoint = {}] [covering = {}]".format(self.__parent, self.__disjoint, self.__covering)

@@ -334,11 +334,15 @@ class EER_Entity:
                 return constraint
 
     def __str__(self):
-        result = self.name + " [ENTITY]\n"
-        for attr in self.attributes:
-            result += attr.name + " [attr]\n"
-        return result
-
+        entity = "ENTITY: [entity_name = " + self.__name + "] "
+        entity += "[weak = " + str(self.__weak) + "]"
+        underline = "\n" + "-"*len(entity) + "\n"
+        entity += underline
+        for attribute in self.__attributes:
+            entity += str(attribute) + "\n"
+        for constraint in self.__constraints:
+            entity += str(constraint) + "\n"
+        return entity
 
 class EER_Attribute:
     """
@@ -384,3 +388,10 @@ class EER_Attribute:
     def is_optional(self):
         """Check if the attribute is optional"""
         return self.__optional
+
+    def __str__(self):
+        attribute = "Attribute: [attr_name = " + self.__name + "] "
+        attribute += "[multi-valued = " + str(self.__multi_valued) + "] "
+        attribute += "[derived = " + str(self.__derived) + "] "
+        attribute += "[optional = " + str(self.__optional) + "]"
+        return attribute

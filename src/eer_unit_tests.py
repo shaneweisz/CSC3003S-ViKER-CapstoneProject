@@ -64,7 +64,6 @@ class Tests(unittest2.TestCase):
         EER.add_eer_relationship(relationship)
         self.assertEqual(EER.get_eer_relationships()[0].get_name(), "WORK", "Should be WORK")
 
-
     # def test_LoadEER(self):
     #     # Test load_eer()
     #     EER = eer.EER_Model()

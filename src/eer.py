@@ -189,13 +189,13 @@ class EER_Model:
         A textual representation of the EER Model.
         """
         str_repr = "EER Model:"
-        # underline = "\n" + "-"*len(str_repr) + "\n"  # to underline 'EER Model'
-        # str_repr += underline
-        # str_repr += "\n".join(ent.__str__() for ent in self.eer_entities)
-        # str_repr += "\n"
-        # str_repr += "\n".join(rel.__str__() for rel in self.eer_relationships)
+        underline = "\n" + "-"*len(str_repr) + "\n"  # to underline 'EER Model'
+        str_repr += underline
+        str_repr += "\n"
+        str_repr += "\n".join(ent.__str__() for ent in self.__eer_entities)
+        str_repr += "\n"
+        str_repr += "\n".join(rel.__str__() for rel in self.__eer_relationships)
         return str_repr
-
 
 class EER_Relationship:
     """

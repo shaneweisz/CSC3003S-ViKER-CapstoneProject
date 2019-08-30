@@ -58,7 +58,7 @@ class EER_Model:
         assert type(new_eer_relationship) == EER_Relationship
         self.eer_relationships.append(new_eer_relationship)
 
-    def load_eer(self, filename='EER_XML_Schema/demo.xml'):
+    def load_eer(self, filename='../EER_XML_Schema/demo.xml'):
         """
         Loads and EER model from an XML file into a python object representation
         """
@@ -67,14 +67,12 @@ class EER_Model:
 
         num_entities = len(root)
         for i in range(num_entities):
-
             if(root[i].attrib["type"] == "Entity"):
                 entity = EER_Entity(root[i].attrib["name"])
                 num_attributes = len(root[i])
                 for j in range(num_attributes):
                     entity.add_attribute(EER_Attribute(root[i][j].text))
-                    if(root[i][j].attrib["type"] == 'pk'):
-                        entity.add_primary_key(EER_Attribute(root[i][j].text))
+
                 self.add_eer_entity(entity)
 
             if(root[i].attrib["type"] == "Relationship"):
@@ -84,6 +82,20 @@ class EER_Model:
                 relation.entity2 = root[i][1].text
                 relation.mult2 = root[i][1].attrib["multiplicity"]
                 self.add_eer_relationship(relation)
+
+            if(root[i].attrib["type"] == "Constraint"):
+                if(root[i][0].text == 'identifier'):
+                    entity_name = root[i][1].text
+                    self.find_entity(entity_name).add_identifier(EER_Attribute(root[i][2].text))
+
+
+    def find_entity(self, entity_name):
+        """
+        Used to find an entity that matches an entity name
+        """
+        for entity in self.eer_entities:
+            if(entity_name == entity.get_name()):
+                return entity
 
     def transform_to_arm(self):
         """Applies the set of transformation rules for EER to ARM.
@@ -107,11 +119,11 @@ class EER_Model:
 
             # STEP B - Foreign Keys - done in the relationships section below
 
-            # STEP C - Primary Key
-            pk = eer_entity.get_primary_key()
-            arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))  # e.g. "MovieID", and recall arm's primary key is a list # noqa
+            # STEP C - Identifier
+            pk = eer_entity.get_identifier()
+            arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))  # e.g. "MovieID", and recall arm's identifier is a list # noqa
             arm_entity.add_constraint(arm_constraints.Pathfd_Constraint(
-                (pk.get_name() for pk in eer_entity.get_primary_key()), "self"))
+                (id.get_name() for id in eer_entity.get_identifiers()), "self"))
             arm_model.add_arm_entity(arm_entity)
 
         # Create the relations for relationships
@@ -178,12 +190,13 @@ class EER_Relationship:
     A class used to represent an EER Relationship
     """
 
-    def __init__(self, name):
+    def __init__(self, name, weak=False):
         self.name = name
         self.entity1 = ""
         self.entity2 = ""
         self.mult1 = ""
         self.mult2 = ""
+        self.weak = weak
 
     def get_name(self):
         return self.name
@@ -216,8 +229,8 @@ class EER_Entity:
     ----------
     name : str
         The name of the entity.
-    primary_keys : list
-        List of primary keys
+    iderntifiers : list
+        List of identifiers
     attributes : list
         List of attributes
     foreign_keys : list
@@ -230,13 +243,13 @@ class EER_Entity:
         """
         Args:
             name (str): The name of the attribute
-            primary_keys (list): List of primary keys
+            identifiers (list): List of identifiers
             attributes (list): List of EER attributes
             foreign_keys (list): List of foreign_keys
             weak (bool): If it is a weak EER entity
         """
         self.name = name
-        self.primary_keys = []
+        self.identifiers = []
         self.attributes = []
         self.foreign_keys = []
         self.weak = weak
@@ -244,25 +257,24 @@ class EER_Entity:
     def add_attribute(self, attribute):
         self.attributes.append(attribute)
 
-    def add_primary_key(self, primary_key):
-        self.primary_keys.append(primary_key)
+    def add_identifier(self, identifier):
+        self.identifiers.append(identifier)
 
     def get_name(self):
         return self.name
 
-    def get_primary_key(self):
-        return self.primary_keys
+    def get_identifier(self):
+        return self.identifiers
 
     def get_attributes(self):
         return self.attributes
 
     def __str__(self):  # needs to be restructured to allow for more than one primary key
         result = self.name + " [ENTITY]\n"
-        for key in self.primary_keys:
-            result += key.name + " [pk]\n"
-            for attr in self.attributes:
-                if(not attr.name == key.name):
-                    result += attr.name + " [attr]\n"
+        for attr in self.attributes:
+            result += attr.name + " [attr]\n"
+        for key in self.identifiers:
+            result += key.name + " [identifier]\n"
         return result
 
 
@@ -290,10 +302,19 @@ class EER_Attribute:
             derived (bool): whether or not the attribute is derived.
             optional (bool): whether or not the attribute is optional.
         """
-        self.name = name
-        self.multi_valued = multi_valued
-        self.derived = derived
-        self.optional = optional
+        self.__name = name
+        self.__multi_valued = multi_valued
+        self.__derived = derived
+        self.__optional = optional
 
     def get_name(self):
-        return self.name
+        return self.__name
+
+    def is_multi_valued(self):
+        return self.__multi_valued
+
+    def is_derived(self):
+        return self.__derived
+
+    def is_optional(self):
+        return self.__optional

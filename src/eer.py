@@ -94,8 +94,6 @@ class EER_Model:
     #     else:
     #         entity = EER_Entity(root[i].attrib["name"], False)
 
-
-
     def find_entity(self, entity_name):
         """
         Used to find an entity that matches an entity name
@@ -118,7 +116,7 @@ class EER_Model:
             # STEP A - Table Declaration
 
             name = eer_entity.get_name()
-            arm_entity = arm.ARM_Entity(name)  # construct a new ARM entity e.g "Movie"
+            arm_entity = arm.ARM_Entity(name)
             arm_entity.add_attribute(arm.ARM_Attribute("self", "OID"))
             for eer_attr in eer_entity.get_attributes():
                 arm_attr = arm.ARM_Attribute(eer_attr.get_name(), "anyType")
@@ -129,7 +127,6 @@ class EER_Model:
             # STEP C - Identifier
             pk = eer_entity.get_identifier()
             arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))  # e.g. "MovieID", and recall arm's identifier is a list # noqa
-
             arm_entity.add_constraint(arm_constraints.Pathfd_Constraint(
                 (id.get_name() for id in eer_entity.get_identifiers()), "self"))
             arm_model.add_arm_entity(arm_entity)

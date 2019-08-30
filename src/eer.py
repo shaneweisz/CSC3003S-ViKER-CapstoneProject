@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import arm
 import arm_constraints
+import eer_constraints
 
 
 class EER_Model:
@@ -86,7 +87,7 @@ class EER_Model:
             if(root[i].attrib["type"] == "Constraint"):
                 if(root[i][0].text == 'identifier'):
                     entity_name = root[i][1].text
-                    self.find_entity(entity_name).add_identifier(EER_Attribute(root[i][2].text))
+                    self.find_entity(entity_name).add_identifier(EER_Attribute(root[i][2].text)) #Add identifier method no longer exists
 
     # def load_entity(self, entity):
     #     if(entity.attrib["weak"] == "True"):
@@ -234,8 +235,8 @@ class EER_Entity:
     ----------
     name : str
         The name of the entity.
-    iderntifiers : list
-        List of identifiers
+    constraints : list of Constraint objects
+        List of constraints on the entity
     attributes : list
         List of attributes
     weak : bool
@@ -244,21 +245,27 @@ class EER_Entity:
 
     def __init__(self, name, weak=False):
         """
-        Args:
+        Attributes:
             name (str): The name of the attribute
-            identifiers (list): List of identifiers
-            attributes (list): List of EER attributes
             weak (bool): If it is a weak EER entity
+            attributes (list): List of EER attributes
+            constraints (list): List of constraints
         """
         self.__name = name
-        self.__attributes = []
         self.__weak = weak
-        self.identifiers = []
+        self.__attributes = []
+        self.__constraints = []
 
     def get_name(self):
+        """Returns the entity name"""
         return self.__name
 
+    def is_weak(self):
+        """Check if the entity is weak"""
+        return self.__weak
+
     def add_attribute(self, attribute):
+        """Add an attribute to the entity"""
         self.__attributes.append(attribute)
 
     def get_attributes(self, index=-1):
@@ -270,21 +277,48 @@ class EER_Entity:
             return self.__attributes
         return self.__attributes[index]
 
-    def is_weak(self):
-        return self.weak
-
-    def add_identifier(self, identifier):
-        self.identifiers.append(identifier)
+    def add_constraint(self, constraint):
+        """Add a constraint on the entity"""
+        assert(len(self.__constraints) <= 2)
+        self.__constraints.append(constraint)
 
     def get_identifier(self):
-        return self.identifiers
+        """
+        Get the identifier(s) constraint on the entity
+        Returns a str list in format ["identifier1", "identifier2", etc...]
+        """
+        for constraint in self.__constraints:
+            identifiers = []
+            if(type(constraint) == eer_constraints.Identifier_Constraint):
+                identifiers = constraint.get_identifier()
+            return identifiers
 
-    def __str__(self):  # needs to be restructured to allow for more than one primary key
+    def is_inherited_from(self):
+        """
+        Checks if the entity has any children
+        Returns True if it has children, otherwise False
+        """
+        has_children = False
+        for constraint in self.__constraints:
+            if(type(constraint) == eer_constraints.Inheritance_Constraint):
+                has_children = True
+        return has_children
+
+    def get_inheritance_constraint(self):
+        """
+        Returns the Inheritance Constraint object associated with this entity1
+        NOTE - this method should only be called after checking if the entity is
+        inherited from by calling the is_inherited_from() method first
+        """
+        assert(self.is_inherited_from())
+        for constraint in self.__constraints:
+            if(type(constraint) == eer_constraints.Inheritance_Constraint):
+                return constraint
+
+    def __str__(self):
         result = self.name + " [ENTITY]\n"
         for attr in self.attributes:
             result += attr.name + " [attr]\n"
-        for key in self.identifiers:
-            result += key.name + " [identifier]\n"
         return result
 
 
@@ -318,13 +352,17 @@ class EER_Attribute:
         self.__optional = optional
 
     def get_name(self):
+        """Returns the attribute name"""
         return self.__name
 
     def is_multi_valued(self):
+        """Check if the attribute has multiple values"""
         return self.__multi_valued
 
     def is_derived(self):
+        """Check if the attribute is derived"""
         return self.__derived
 
     def is_optional(self):
+        """Check if the attribute is optional"""
         return self.__optional

@@ -5,8 +5,8 @@ class Constraint:
     """
     A class used to represent a constraint in an EER_Entity.
     Acts as an abstract class - it is never itself instantiated, instead
-    the Identifier_Constraint, Inheritance_Constraint etc. classes below inherit from this
-    class and are themselves instantiated.
+    the Identifier_Constraint and Inheritance_Constraint classes below
+    inherit from this class and are themselves instantiated.
     """
 
     def __str__(self):
@@ -59,13 +59,15 @@ class Inheritance_Constraint(Constraint):
         self.__covering = covering
 
     def get_parent(self):
-        """Getter for the parent."""
+        """Getter for the parent name."""
         return self.__parent
 
     def is_disjoint(self):
+        """Check for disjoint inheritance."""
         return self.__disjoint
 
     def is_covering(self):
+        """Check for covering inheritance."""
         return self.__covering
 
     def __str__(self):

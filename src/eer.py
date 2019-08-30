@@ -186,7 +186,7 @@ class EER_Model:
 
     def __str__(self):
         """
-        A textual representation of the ARM Model.
+        A textual representation of the EER Model.
         """
         str_repr = "EER Model:"
         # underline = "\n" + "-"*len(str_repr) + "\n"  # to underline 'EER Model'
@@ -238,11 +238,13 @@ class EER_Relationship:
         return self.__weak
 
     def __str__(self):
-        result = self.__name + ' [RELATIONSHIP]\n'
-        # result += self.entity1 + " " + "(" + self.mult1 + ")\n"
-        # result += self.entity2 + " " + "(" + self.mult2 + ")\n"
-        return result
-
+        """A textual representation of an EER Relationship"""
+        relationship = "RELATIONSHIP: [relationship_name = {}] [weak = {}]".format(self.__name, self.__weak)
+        underline = "\n" + "-"*len(relationship) + "\n"
+        relationship += underline
+        relationship += "Entity1: [entity_name = {}] [multiplicity = {}]\n".format(self.__entity1[0], self.__entity1[1])
+        relationship += "Entity2: [entity_name = {}] [multiplicity = {}]".format(self.__entity2[0], self.__entity2[1])
+        return relationship
 
 class EER_Entity:
     """
@@ -334,8 +336,8 @@ class EER_Entity:
                 return constraint
 
     def __str__(self):
-        entity = "ENTITY: [entity_name = " + self.__name + "] "
-        entity += "[weak = " + str(self.__weak) + "]"
+        """A textual representation of an EER Entity"""
+        entity = "ENTITY: [entity_name = {}] [weak = {}]".format(self.__name, self.__weak)
         underline = "\n" + "-"*len(entity) + "\n"
         entity += underline
         for attribute in self.__attributes:
@@ -390,8 +392,5 @@ class EER_Attribute:
         return self.__optional
 
     def __str__(self):
-        attribute = "Attribute: [attr_name = " + self.__name + "] "
-        attribute += "[multi-valued = " + str(self.__multi_valued) + "] "
-        attribute += "[derived = " + str(self.__derived) + "] "
-        attribute += "[optional = " + str(self.__optional) + "]"
-        return attribute
+        """A textual representation of an EER Attribute"""
+        return "Attribute: [attr_name = {}] [multi-valued = {}] [derived = {}] [optional = {}]".format(self.__name, self.__multi_valued, self.__derived, self.__optional)

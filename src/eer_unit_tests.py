@@ -42,8 +42,6 @@ class Tests(unittest2.TestCase):
         inheritance_constraint = entity.get_inheritance_constraint()
         self.assertEqual(inheritance_constraint.is_disjoint(), True, "Should be True")
         self.assertEqual(inheritance_constraint.is_covering(), False, "Should be False")
-        print(entity)
-        print(entity)
 
     def test_EER_Relationship(self):
         relationship = eer.EER_Relationship("WORK", ("Professor", "n"), ("Department", "1"), True)

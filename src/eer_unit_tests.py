@@ -44,7 +44,14 @@ class Tests(unittest2.TestCase):
         self.assertEqual(inheritance_constraint.is_covering(), False, "Should be False")
 
     def test_EER_Relationship(self):
-        pass
+        relationship = eer.EER_Relationship("WORK", ("Professor", "n"), ("Department", "1"), True)
+        #Test get_name()
+        self.assertEqual(relationship.get_name(), "WORK", "Should be WORK")
+        #Test get_entities()
+        self.assertEqual(relationship.get_entity1(), ("Professor", "n"), "Should be (Professor, n)")
+        self.assertEqual(relationship.get_entity2(), ("Department", "1"), "Should be (Department, 1)")
+        #Test is_weak()
+        self.assertEqual(relationship.is_weak(), True, "Should be True")
 
     def test_EER_Model(self):
         # Test add_eer_entity()

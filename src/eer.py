@@ -194,35 +194,47 @@ class EER_Model:
 class EER_Relationship:
     """
     A class used to represent an EER Relationship
+
+    Attributes
+    ----------
+    name : str
+        The name of the relationship.
+    entity1 : tuple
+        entity1 with its associated multiplicity
+    entity2 : tuple
+        entity2 with its associated multiplicity
+    weak : bool
+        If it is a weak EER Relationship
     """
 
-    def __init__(self, name, weak=False):
-        self.name = name
-        self.entity1 = ""
-        self.entity2 = ""
-        self.mult1 = ""
-        self.mult2 = ""
-        self.weak = weak
+    def __init__(self, name, entity1, entity2, weak=False):
+        assert(type(entity1) == tuple)
+        assert(type(entity2) == tuple)
+        self.__name = name
+        self.__entity1 = entity1
+        self.__entity2 = entity2
+        self.__weak = weak
 
     def get_name(self):
-        return self.name
+        """Get the name of the relationship"""
+        return self.__name
 
     def get_entity1(self):
-        return self.entity1
+        """Returns entity1 with it's associated multiplicity"""
+        return self.__entity1
 
     def get_entity2(self):
-        return self.entity2
+        """Returns entity2 with it's associated multiplicity"""
+        return self.__entity2
 
-    def get_mult1(self):
-        return self.mult1
-
-    def get_mult2(self):
-        return self.mult2
+    def is_weak(self):
+        """Check if it is a weak relationship"""
+        return self.__weak
 
     def __str__(self):
-        result = self.name + ' [RELATIONSHIP]\n'
-        result += self.entity1 + " " + "(" + self.mult1 + ")\n"
-        result += self.entity2 + " " + "(" + self.mult2 + ")\n"
+        result = self.__name + ' [RELATIONSHIP]\n'
+        # result += self.entity1 + " " + "(" + self.mult1 + ")\n"
+        # result += self.entity2 + " " + "(" + self.mult2 + ")\n"
         return result
 
 

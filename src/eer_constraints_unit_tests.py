@@ -9,13 +9,10 @@ class Tests(unittest2.TestCase):
         self.assertEqual(constraint.get_identifier()[1], "name", "should be pid")
 
     def test_Inheritance_Constraint(self):
-        constraint = EC.Inheritance_Constraint("Parent")
+        constraint = EC.Inheritance_Constraint("Parent", True, False)
         self.assertEqual(constraint.get_parent(), "Parent", "should be Parent")
-
-    def test_Cover_Constraint(self):
-        constraint = EC.Cover_Constraint(["undergrad", "postgrad"])
-        self.assertEqual(constraint.get_covered_by()[0], "undergrad", "should be undergrad")
-        self.assertEqual(constraint.get_covered_by()[1], "postgrad", "should be postgrad")
+        self.assertEqual(constraint.is_disjoint(), True,  "should be True")
+        self.assertEqual(constraint.is_covering(), False, "should be False")
 
 
 if __name__ == '__main__':

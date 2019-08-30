@@ -16,11 +16,11 @@ class Tests(unittest2.TestCase):
     def test_EEREntity(self):
         # Test EER_Entity()
         entity = eer.EER_Entity("Professor")
-        self.assertEqual(entity.name, "Professor", "Should be Professor")
+        self.assertEqual(entity.get_name(), "Professor", "Should be Professor")
         # Test add_attribute()
         attribute = eer.EER_Attribute("name")
         entity.add_attribute(attribute)
-        self.assertEqual(entity.attributes[0].get_name(), "name", "Should be name")
+        self.assertEqual(entity.get_attributes(0).get_name(), "name", "Should be name")
 
     def test_EER(self):
         # Test add_eer_entity()
@@ -35,14 +35,14 @@ class Tests(unittest2.TestCase):
         EER.load_eer()
         self.assertEqual(len(EER.eer_entities), 2, "Should be 2")
         self.assertEqual(EER.eer_entities[0].get_name(), "Professor", "Should be Professor")
-        self.assertEqual(EER.eer_entities[0].attributes[0].get_name(), "pid", "Should be pid")
+        self.assertEqual(EER.eer_entities[0].get_attributes(0).get_name(), "pid", "Should be pid")
         self.assertEqual(EER.eer_entities[0].identifiers[0].get_name(), "pid", "Should be pid")
-        self.assertEqual(EER.eer_entities[0].attributes[1].get_name(), "pname", "Should be pname")
-        self.assertEqual(EER.eer_entities[0].attributes[2].get_name(), "office", "Should be office")
+        self.assertEqual(EER.eer_entities[0].get_attributes(1).get_name(), "pname", "Should be pname")
+        self.assertEqual(EER.eer_entities[0].get_attributes(2).get_name(), "office", "Should be office")
         self.assertEqual(EER.eer_entities[1].get_name(), "Department", "Should be Department")
-        self.assertEqual(EER.eer_entities[1].attributes[0].get_name(), "dcode", "Should be dcode")
+        self.assertEqual(EER.eer_entities[1].get_attributes(0).get_name(), "dcode", "Should be dcode")
         self.assertEqual(EER.eer_entities[1].identifiers[0].get_name(), "dcode", "Should be dcode")
-        self.assertEqual(EER.eer_entities[1].attributes[1].get_name(), "dname", "Should be dname")
+        self.assertEqual(EER.eer_entities[1].get_attributes(1).get_name(), "dname", "Should be dname")
 
         self.assertEqual(len(EER.eer_relationships), 1, "Should be 1")
         self.assertEqual(EER.eer_relationships[0].get_name(), "WORK", "Should be WORK")

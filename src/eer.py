@@ -65,8 +65,8 @@ class EER_Model:
         tree = ET.parse(filename)
         root = tree.getroot()
 
-        num_entities = len(root)
-        for i in range(num_entities):
+        num_elements = len(root)
+        for i in range(num_elements):
             if(root[i].attrib["type"] == "Entity"):
                 entity = EER_Entity(root[i].attrib["name"])
                 num_attributes = len(root[i])
@@ -87,6 +87,13 @@ class EER_Model:
                 if(root[i][0].text == 'identifier'):
                     entity_name = root[i][1].text
                     self.find_entity(entity_name).add_identifier(EER_Attribute(root[i][2].text))
+
+    # def load_entity(self, entity):
+    #     if(entity.attrib["weak"] == "True"):
+    #         entity = EER_Entity(root[i].attrib["name"], True)
+    #     else:
+    #         entity = EER_Entity(root[i].attrib["name"], False)
+
 
 
     def find_entity(self, entity_name):
@@ -233,8 +240,6 @@ class EER_Entity:
         List of identifiers
     attributes : list
         List of attributes
-    foreign_keys : list
-        List of foreign_keys
     weak : bool
         If it is a weak EER entity
     """
@@ -245,29 +250,36 @@ class EER_Entity:
             name (str): The name of the attribute
             identifiers (list): List of identifiers
             attributes (list): List of EER attributes
-            foreign_keys (list): List of foreign_keys
             weak (bool): If it is a weak EER entity
         """
-        self.name = name
+        self.__name = name
+        self.__attributes = []
+        self.__weak = weak
         self.identifiers = []
-        self.attributes = []
-        self.foreign_keys = []
-        self.weak = weak
+
+    def get_name(self):
+        return self.__name
 
     def add_attribute(self, attribute):
-        self.attributes.append(attribute)
+        self.__attributes.append(attribute)
+
+    def get_attributes(self, index=-1):
+        """
+        Returns a list of all the attributes unless an index is supplied,
+        in which case on the attribute at that index is returned
+        """
+        if(index == -1):
+            return self.__attributes
+        return self.__attributes[index]
+
+    def is_weak(self):
+        return self.weak
 
     def add_identifier(self, identifier):
         self.identifiers.append(identifier)
 
-    def get_name(self):
-        return self.name
-
     def get_identifier(self):
         return self.identifiers
-
-    def get_attributes(self):
-        return self.attributes
 
     def __str__(self):  # needs to be restructured to allow for more than one primary key
         result = self.name + " [ENTITY]\n"

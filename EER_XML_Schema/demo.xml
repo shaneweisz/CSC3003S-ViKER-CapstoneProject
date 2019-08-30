@@ -1,19 +1,31 @@
 <eer>
 
-	<entity name="Professor" type="Entity">
-		<attribute type="pk">pid</attribute>
-		<attribute type="attr">pname</attribute>
-		<attribute type="attr">office</attribute>
+	<entity name="Professor" type="Entity" weak="False">
+		<attribute type="attr" multi-valued="False" derived="False" optional="False">pid</attribute>
+		<attribute type="attr" multi-valued="False" derived="False" optional="False">pname</attribute>
+		<attribute type="attr" multi-valued="False" derived="False" optional="False">office</attribute>
 	</entity>
 
-	<entity name="Department" type="Entity">
-		<attribute type="pk">dcode</attribute>
-		<attribute type="attr">dname</attribute>
+	<entity name="Department" type="Entity" weak="False">
+		<attribute type="attr" multi-valued="False" derived="False" optional="False">dcode</attribute>
+		<attribute type="attr" multi-valued="False" derived="False" optional="False">dname</attribute>
 	</entity>
 
 	<relationship name="WORK" type="Relationship">
 		<entityName multiplicity="n">Professor</entityName>
 		<entityName multiplicity="1">Department</entityName>
 	</relationship>
+
+	<constraint type="Constraint">
+		<constraintName>identifier</constraintName>
+		<entityConstrained>Professor</entityConstrained>
+		<attributeConstrained>pid</attributeConstrained>
+	</constraint>
+
+	<constraint type="Constraint">
+		<constraintName>identifier</constraintName>
+		<entityConstrained>Department</entityConstrained>
+		<attributeConstrained>dcode</attributeConstrained>
+	</constraint>
 
 </eer>

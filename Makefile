@@ -2,6 +2,10 @@
 run:
 	python3 src/main.py
 
+# Run `make runARM` to run the ARM Example
+runARM:
+	python3 src/arm_example.py
+
 # Run `make gui` to view the static GUI of the application
 gui:
 	python3 src/view.py

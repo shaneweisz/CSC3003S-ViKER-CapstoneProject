@@ -163,7 +163,7 @@ class Pathfd_Constraint(Constraint):
     Attributes
     ----------
     attributes : list
-        The attributes that together determine `target`
+        The names of the attributes that together determine `target`
     target : str
         The name of the attribute that is determined by the fd
     """

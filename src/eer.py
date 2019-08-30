@@ -225,6 +225,10 @@ class EER_Relationship:
         """Get the name of the relationship"""
         return self.__name
 
+    def set_weak(self, is_weak):
+        """Set whether or not the entity is weak"""
+        self.__weak = is_weak
+
     def get_entity1(self):
         """Returns entity1 with it's associated multiplicity"""
         return self.__entity1
@@ -279,6 +283,10 @@ class EER_Entity:
     def get_name(self):
         """Returns the entity name"""
         return self.__name
+
+    def set_weak(self, is_weak):
+        """Set whether or not the entity is weak"""
+        self.__weak = is_weak
 
     def is_weak(self):
         """Check if the entity is weak"""

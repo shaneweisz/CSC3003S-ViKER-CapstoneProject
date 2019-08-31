@@ -115,7 +115,7 @@ class EER_Model:
         for eer_entity in self.__eer_entities:
             # STEP I: If the entity is 'strong'
             if not eer_entity.is_weak():
-                # STEP A - Table Declaration
+                # STEP I_A - Table Declaration
 
                 name = eer_entity.get_name()
                 arm_entity = arm.ARM_Entity(name)
@@ -124,18 +124,35 @@ class EER_Model:
                     arm_attr = arm.ARM_Attribute(eer_attr.get_name(), "anyType")
                     arm_entity.add_attribute(arm_attr)  # e.g "Runtime (anyType)"
 
-                # STEP B - Foreign Keys - done in the relationships section below
+                # STEP I_B - Foreign Keys - done in the relationships section below
 
-                # STEP C - Primary Key
+                # STEP I_C - Primary Key
 
                 # Extract the identifier
                 pk = eer_entity.get_identifier()
-                arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))  # e.g. "MovieID", and recall arm's identifier is a list # noqa
+                arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))
                 arm_entity.add_constraint(arm_constraints.Pathfd_Constraint(pk, "self"))
                 arm_model.add_arm_entity(arm_entity)
             else:
                 # STEP II: If the entity is 'weak'
-                pass
+                # STEP II_A - Table Declaration
+
+                name = eer_entity.get_name()
+                arm_entity = arm.ARM_Entity(name)
+                arm_entity.add_attribute(arm.ARM_Attribute("self", "OID"))
+                for eer_attr in eer_entity.get_attributes():
+                    arm_attr = arm.ARM_Attribute(eer_attr.get_name(), "anyType")
+                    arm_entity.add_attribute(arm_attr)  # e.g "Runtime (anyType)"
+
+                # STEP II_B - Foreign Keys - done in the relationships section below
+
+                # STEP II_C - Primary Key
+
+                # Extract the PARTIAL identifier
+                pk = eer_entity.get_identifier()
+                arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))
+                arm_entity.add_constraint(arm_constraints.Pathfd_Constraint(pk, "self"))
+                arm_model.add_arm_entity(arm_entity)
 
         # Create the relations for relationships
         for relationship in self.__eer_relationships:
@@ -144,6 +161,30 @@ class EER_Model:
             entity2 = relationship.get_entity2()
             mult1 = relationship.get_mult1()
             mult2 = relationship.get_mult2()
+
+            # Check for WEAK relationship
+            # If so, extend the pathfd constraint of the WEAK entity beyond the partial identifier accordinly
+            if relationship.is_weak():
+                # We must first find whether it is entity1 or entity2 that is WEAK
+                weak_entity = entity1  # assume it is entity1, then check if it is actually entity2
+                for ent in self.__eer_entities:
+                    if ent.get_name() == entity2 and ent.is_weak():
+                        weak_entity = entity2
+
+                for ent in arm_model.get_arm_entities():
+                    if ent.get_name() == weak_entity:
+                        victim_entity = ent
+                        for constraint in victim_entity.get_constraints():
+                            if type(constraint) == arm_constraints.Pathfd_Constraint:
+                                if constraint.get_target() == 'self':
+                                    # If here, we have found the appropriate Pathfd to edit
+                                    if weak_entity == entity1:
+                                        constraint.set_attributes(
+                                            constraint.get_attributes() + [entity2.lower()])
+                                    else:
+                                        constraint.set_attributes(
+                                            constraint.get_attributes() + [entity1.lower()])
+                        break
 
             # Check that multiplicities exist, before we iterate over them using 'in' in the for loop below
             if mult1 is None or mult2 is None:

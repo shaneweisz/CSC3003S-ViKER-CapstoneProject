@@ -173,8 +173,12 @@ class Pathfd_Constraint(Constraint):
         self.target = target
 
     def get_attributes(self):
-        """Getter for the attribues."""
+        """Getter for the attributes."""
         return self.attributes
+
+    def set_attributes(self, new_attributes):
+        """Setter for the attributes."""
+        self.attributes = new_attributes
 
     def get_target(self):
         """Getter for the target."""

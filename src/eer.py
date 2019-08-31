@@ -85,7 +85,8 @@ class EER_Model:
             if(root[i].attrib["type"] == "Constraint"):
                 if(root[i][0].text == 'identifier'):
                     entity_name = root[i][1].text
-                    self.find_entity(entity_name).add_identifier(EER_Attribute(root[i][2].text)) #Add identifier method no longer exists
+                    self.find_entity(entity_name).add_identifier(EER_Attribute(
+                        root[i][2].text))  # Add identifier method no longer exists
 
     # def load_entity(self, entity):
     #     if(entity.attrib["weak"] == "True"):
@@ -197,6 +198,7 @@ class EER_Model:
         str_repr += "\n".join(rel.__str__() for rel in self.__eer_relationships)
         return str_repr
 
+
 class EER_Relationship:
     """
     A class used to represent an EER Relationship
@@ -205,20 +207,26 @@ class EER_Relationship:
     ----------
     name : str
         The name of the relationship.
-    entity1 : tuple
-        entity1 with its associated multiplicity
-    entity2 : tuple
-        entity2 with its associated multiplicity
+    entity1 : str
+        The name of the first entity in the relationship.
+    entity2 : str
+        The name of the second entity in the relationship.
+    mult1 : 2-tuple of str
+        The multiplicity for entity 1 e.g. ("0", "n")
+    mult2 : 2-tuple of str
+        The multiplicity for entity 2 e.g. ("1",)
     weak : bool
         If it is a weak EER Relationship
     """
 
-    def __init__(self, name, entity1, entity2, weak=False):
-        assert(type(entity1) == tuple)
-        assert(type(entity2) == tuple)
+    def __init__(self, name, entity1, entity2, mult1, mult2, weak=False):
+        assert(type(entity1) == str)
+        assert(type(entity2) == str)
         self.__name = name
         self.__entity1 = entity1
         self.__entity2 = entity2
+        self.__mult1 = mult1
+        self.__mult2 = mult2
         self.__weak = weak
 
     def get_name(self):
@@ -230,12 +238,20 @@ class EER_Relationship:
         self.__weak = is_weak
 
     def get_entity1(self):
-        """Returns entity1 with it's associated multiplicity"""
+        """Returns entity1's name"""
         return self.__entity1
 
     def get_entity2(self):
-        """Returns entity2 with it's associated multiplicity"""
+        """Returns entity2's name'"""
         return self.__entity2
+
+    def get_mult1(self):
+        """Returns entity1's multiplicity"""
+        return self.__mult1
+
+    def get_mult2(self):
+        """Returns entity2's multiplicity'"""
+        return self.__mult2
 
     def is_weak(self):
         """Check if it is a weak relationship"""
@@ -243,12 +259,16 @@ class EER_Relationship:
 
     def __str__(self):
         """A textual representation of an EER Relationship"""
-        relationship = "RELATIONSHIP: [relationship_name = {}] [weak = {}]".format(self.__name, self.__weak)
+        relationship = "RELATIONSHIP: [relationship_name = {}] [weak = {}]".format(
+            self.__name, self.__weak)
         underline = "\n" + "-"*len(relationship) + "\n"
         relationship += underline
-        relationship += "Entity1: [entity_name = {}] [multiplicity = {}]\n".format(self.__entity1[0], self.__entity1[1])
-        relationship += "Entity2: [entity_name = {}] [multiplicity = {}]".format(self.__entity2[0], self.__entity2[1])
+        relationship += "Entity1: [entity_name = {}] [multiplicity = {}]\n".format(
+            self.__entity1, self.__mult1)
+        relationship += "Entity2: [entity_name = {}] [multiplicity = {}]".format(
+            self.__entity2, self.__entity2)
         return relationship
+
 
 class EER_Entity:
     """
@@ -353,6 +373,7 @@ class EER_Entity:
         for constraint in self.__constraints:
             entity += str(constraint) + "\n"
         return entity
+
 
 class EER_Attribute:
     """

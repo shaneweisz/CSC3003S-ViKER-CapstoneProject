@@ -6,6 +6,10 @@ run:
 runARM:
 	python3 src/arm_example.py $(n)
 
+# Run `make runEER n=1` to run the ARM Example
+runEER:
+	python3 src/eer_example.py $(n)
+
 # Run `make gui` to view the static GUI of the application
 gui:
 	python3 src/view.py

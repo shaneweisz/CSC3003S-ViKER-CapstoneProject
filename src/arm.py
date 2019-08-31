@@ -1,5 +1,6 @@
 import arm_constraints
 import eer
+import eer_constraints as EC
 
 
 class ARM_Model:
@@ -93,7 +94,8 @@ class ARM_Model:
             if entity_added:
                 for attr in pk:
                     new_ent.add_attribute(eer.EER_Attribute(attr))
-                    new_ent.add_primary_key(eer.EER_Attribute(attr))
+                    id_constraint = EC.Identifier_Constraint([attr])
+                    new_ent.add_constraint(id_constraint)
 
                 # STEP III: Extract and add non-pk attributes
                 for attr in arm_entity.get_attributes():
@@ -105,10 +107,10 @@ class ARM_Model:
                                 new_rel = eer.EER_Relationship(
                                     arm_entity.get_name()
                                     + constraint.get_references())
-                                new_rel.entity1 = arm_entity.get_name()
-                                new_rel.entity2 = constraint.get_references()
-                                new_rel.mult1 = "1"
-                                new_rel.mult2 = "1"
+                                new_rel.set_entity1(arm_entity.get_name())
+                                new_rel.set_entity2(constraint.get_references())
+                                new_rel.set_mult1(("1",))
+                                new_rel.set_mult2(("1",))
                                 eer_model.add_eer_relationship(new_rel)
                                 break
                         else:  # Attribute is a regular attribute

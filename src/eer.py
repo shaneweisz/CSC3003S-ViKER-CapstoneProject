@@ -219,9 +219,7 @@ class EER_Relationship:
         If it is a weak EER Relationship
     """
 
-    def __init__(self, name, entity1, entity2, mult1, mult2, weak=False):
-        assert(type(entity1) == str)
-        assert(type(entity2) == str)
+    def __init__(self, name, entity1=None, entity2=None, mult1=None, mult2=None, weak=False):
         self.__name = name
         self.__entity1 = entity1
         self.__entity2 = entity2
@@ -229,13 +227,28 @@ class EER_Relationship:
         self.__mult2 = mult2
         self.__weak = weak
 
-    def get_name(self):
-        """Get the name of the relationship"""
-        return self.__name
+    def set_name(self, name):
+        self.__name = name
+
+    def set_entity1(self, entity1):
+        self.__entity1 = entity1
+
+    def set_entity2(self, entity2):
+        self.__entity2 = entity2
+
+    def set_mult1(self, mult1):
+        self.__mult1 = mult1
+
+    def set_mult2(self, mult2):
+        self.__mult2 = mult2
 
     def set_weak(self, is_weak):
         """Set whether or not the entity is weak"""
         self.__weak = is_weak
+
+    def get_name(self):
+        """Get the name of the relationship"""
+        return self.__name
 
     def get_entity1(self):
         """Returns entity1's name"""
@@ -266,7 +279,7 @@ class EER_Relationship:
         relationship += "Entity1: [entity_name = {}] [multiplicity = {}]\n".format(
             self.__entity1, self.__mult1)
         relationship += "Entity2: [entity_name = {}] [multiplicity = {}]".format(
-            self.__entity2, self.__entity2)
+            self.__entity2, self.__mult2)
         return relationship
 
 

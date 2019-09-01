@@ -17,4 +17,5 @@ clean:
 # Run `make tests` to run all unit tests
 tests:
 	python3 src/eer_unit_tests.py
+	python3 src/eer_constraints_unit_tests.py
 	python3 src/arm_unit_tests.py

@@ -80,7 +80,7 @@ class Tests(unittest2.TestCase):
         EER = eer.EER_Model()
         EER.load_eer()
         #Write tests once XML schema is finalised
-
+        print(EER)
 
 if __name__ == '__main__':
     unittest2.main()

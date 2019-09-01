@@ -77,17 +77,14 @@ class EER_Model:
         Loads an EER entity from an XML file
         Helper method for the broader load_eer()
         """
-        if(entity_block.attrib["weak"] == "True"):
-            entity = EER_Entity(entity_block.attrib["name"], True)
-        else:
-            entity = EER_Entity(entity_block.attrib["name"], False)
+        entity = EER_Entity(entity_block.attrib["name"], self.parse_bool(entity_block.attrib["weak"]))
         entity_components = len(entity_block)
         for j in range(entity_components):
             if(entity_block[j].attrib["type"] == "attr"):
                 attr_name = entity_block[j].text
-                multi_valued = bool(entity_block[j].attrib["multi_valued"])
-                derived = parse_bool(entity_block[j].attrib["derived"])
-                optional = parse_bool(entity_block[j].attrib["optional"])
+                multi_valued = self.parse_bool(entity_block[j].attrib["multi_valued"])
+                derived = self.parse_bool(entity_block[j].attrib["derived"])
+                optional = self.parse_bool(entity_block[j].attrib["optional"])
                 entity.add_attribute(EER_Attribute(attr_name, multi_valued, derived, optional))
             if(entity_block[j].attrib["type"] == "identifier"):
                 identifier = [entity_block[j].text]
@@ -95,8 +92,8 @@ class EER_Model:
                 entity.add_constraint(id_constraint)
             if(entity_block[j].attrib["type"] == "inheritance"):
                 parent = entity_block[j].text
-                disjoint = parse_bool(entity_block[j].attrib["disjoint"])
-                covering = parse_bool(entity_block[j].attrib["covering"])
+                disjoint = self.parse_bool(entity_block[j].attrib["disjoint"])
+                covering = self.parse_bool(entity_block[j].attrib["covering"])
                 inherit_constraint = eer_constraints.Inheritance_Constraint(parent, disjoint, covering)
                 entity.add_constraint(inherit_constraint)
         self.add_eer_entity(entity)
@@ -106,13 +103,12 @@ class EER_Model:
         Loads an EER Relationship from an XML file
         Helper method for the broader load_eer()
         """
-        print("LOAD RELATIONSHIP CALLED")
-        # relation = EER_Relationship(root[i].attrib["name"])
-        # relation.entity1 = root[i][0].text
-        # relation.mult1 = root[i][0].attrib["multiplicity"]
-        # relation.entity2 = root[i][1].text
-        # relation.mult2 = root[i][1].attrib["multiplicity"]
-        # self.add_eer_relationship(relation)
+        relationship = EER_Relationship(relationship_block.attrib["name"])
+        relationship.set_entity1(relationship_block[0].text)
+        relationship.set_mult1((relationship_block[0].attrib["mult_left"], relationship_block[0].attrib["mult_right"]))
+        relationship.set_entity2(relationship_block[1].text)
+        relationship.set_mult2((relationship_block[1].attrib["mult_left"], relationship_block[1].attrib["mult_right"]))
+        self.add_eer_relationship(relationship)
 
     def parse_bool(self, value):
         """Convert from string to boolean"""

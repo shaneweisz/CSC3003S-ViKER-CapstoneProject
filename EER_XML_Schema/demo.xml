@@ -11,7 +11,11 @@
 	<entity name="Department" type="Entity" weak="False">
 		<attribute type="attr" multi_valued="False" derived="False" optional="False">dcode</attribute>
 		<attribute type="attr" multi_valued="False" derived="False" optional="False">dname</attribute>
+<<<<<<< HEAD
 		<constraint type="identifier">dcode</constraint>
+=======
+		<constraint type="identifier">did</constraint>
+>>>>>>> bbcd5be02a517f6382a3a5ac0e324d6b3d221547
 	</entity>
 
 	<relationship name="WORK" type="Relationship">

@@ -113,6 +113,7 @@ class EER_Model:
                 multi_valued = self.parse_bool(relationship_block[j].attrib["multi_valued"])
                 derived = self.parse_bool(relationship_block[j].attrib["derived"])
                 optional = self.parse_bool(relationship_block[j].attrib["optional"])
+<<<<<<< HEAD
                 relationship.add_attribute(EER_Attribute(
                     attr_name, multi_valued, derived, optional))
             if(relationship_block[j].attrib["type"] == "ent"):
@@ -122,6 +123,14 @@ class EER_Model:
                 relationship.set_entity2(relationship_block[j].text)
                 relationship.set_mult2(
                     (relationship_block[j].attrib["mult_left"], relationship_block[j].attrib["mult_right"]))
+=======
+                relationship.add_attribute(EER_Attribute(attr_name, multi_valued, derived, optional))
+            if(relationship_block[j].attrib["type"] == "ent"):
+                relationship.set_entity1(relationship_block[j].text)
+                relationship.set_mult1((relationship_block[j].attrib["mult_left"], relationship_block[j].attrib["mult_right"]))
+                relationship.set_entity2(relationship_block[j].text)
+                relationship.set_mult2((relationship_block[j].attrib["mult_left"], relationship_block[j].attrib["mult_right"]))
+>>>>>>> bbcd5be02a517f6382a3a5ac0e324d6b3d221547
         self.add_eer_relationship(relationship)
 
     def parse_bool(self, value):

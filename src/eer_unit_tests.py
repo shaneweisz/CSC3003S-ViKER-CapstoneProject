@@ -76,29 +76,11 @@ class Tests(unittest2.TestCase):
         EER.add_eer_relationship(relationship)
         self.assertEqual(EER.get_eer_relationships()[0].get_name(), "WORK", "Should be WORK")
 
-    # def test_LoadEER(self):
-    #     # Test load_eer()
-    #     EER = eer.EER_Model()
-    #     EER.load_eer()
-    #     self.assertEqual(len(EER.eer_entities), 2, "Should be 2")
-    #     self.assertEqual(EER.eer_entities[0].get_name(), "Professor", "Should be Professor")
-    #     self.assertEqual(EER.eer_entities[0].get_attributes(0).get_name(), "pid", "Should be pid")
-    #     self.assertEqual(EER.eer_entities[0].identifiers[0].get_name(), "pid", "Should be pid")
-    #     self.assertEqual(EER.eer_entities[0].get_attributes(1).get_name(), "pname", "Should be pname")
-    #     self.assertEqual(EER.eer_entities[0].get_attributes(2).get_name(), "office", "Should be office")
-    #     self.assertEqual(EER.eer_entities[1].get_name(), "Department", "Should be Department")
-    #     self.assertEqual(EER.eer_entities[1].get_attributes(0).get_name(), "dcode", "Should be dcode")
-    #     self.assertEqual(EER.eer_entities[1].identifiers[0].get_name(), "dcode", "Should be dcode")
-    #     self.assertEqual(EER.eer_entities[1].get_attributes(1).get_name(), "dname", "Should be dname")
-    #
-    #     self.assertEqual(len(EER.eer_relationships), 1, "Should be 1")
-    #     self.assertEqual(EER.eer_relationships[0].get_name(), "WORK", "Should be WORK")
-    #     self.assertEqual(EER.eer_relationships[0].get_entity1(), "Professor", "Should be Professor")
-    #     self.assertEqual(EER.eer_relationships[0].get_entity2(),
-    #                      "Department", "Should be Department")
-    #     self.assertEqual(EER.eer_relationships[0].get_mult1(), "n", "Should be n")
-    #     self.assertEqual(EER.eer_relationships[0].get_mult2(), "1", "Should be 1")
-
+    def test_LoadEER(self):
+        EER = eer.EER_Model()
+        EER.load_eer()
+        #Write tests once XML schema is finalised
+        print(EER)
 
 if __name__ == '__main__':
     unittest2.main()

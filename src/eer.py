@@ -67,31 +67,52 @@ class EER_Model:
         num_elements = len(root)
         for i in range(num_elements):
             if(root[i].attrib["type"] == "Entity"):
-                entity = EER_Entity(root[i].attrib["name"])
-                num_attributes = len(root[i])
-                for j in range(num_attributes):
-                    entity.add_attribute(EER_Attribute(root[i][j].text))
-
-                self.add_eer_entity(entity)
+                self.load_entity(root[i])
 
             if(root[i].attrib["type"] == "Relationship"):
-                relation = EER_Relationship(root[i].attrib["name"])
-                relation.entity1 = root[i][0].text
-                relation.mult1 = root[i][0].attrib["multiplicity"]
-                relation.entity2 = root[i][1].text
-                relation.mult2 = root[i][1].attrib["multiplicity"]
-                self.add_eer_relationship(relation)
+                self.load_relationship(root[i])
 
-            if(root[i].attrib["type"] == "Constraint"):
-                if(root[i][0].text == 'identifier'):
-                    entity_name = root[i][1].text
-                    self.find_entity(entity_name).add_identifier(EER_Attribute(root[i][2].text)) #Add identifier method no longer exists
+    def load_entity(self, entity_block):
+        """
+        Loads an EER entity from an XML file
+        Helper method for the broader load_eer()
+        """
+        if(entity_block.attrib["weak"] == "True"):
+            entity = EER_Entity(entity_block.attrib["name"], True)
+        else:
+            entity = EER_Entity(entity_block.attrib["name"], False)
+        entity_components = len(entity_block)
+        for j in range(entity_components):
+            if(entity_block[j].attrib["type"] == "attr"):
+                attr_name = entity_block[j].text
+                multi_valued = bool(entity_block[j].attrib["multi_valued"])
+                derived = bool(entity_block[j].attrib["derived"]) #not working
+                optional = bool(entity_block[j].attrib["optional"]) #not working
+                entity.add_attribute(EER_Attribute(attr_name, multi_valued, derived, optional))
+            if(entity_block[j].attrib["type"] == "identifier"):
+                identifier = [entity_block[j].text]
+                id_constraint = eer_constraints.Identifier_Constraint(identifier)
+                entity.add_constraint(id_constraint)
+            if(entity_block[j].attrib["type"] == "inheritance"):
+                parent = entity_block[j].text
+                disjoint = bool(entity_block[j].attrib["disjoint"]) #not working
+                covering = bool(entity_block[j].attrib["covering"]) #not working
+                inherit_constraint = eer_constraints.Inheritance_Constraint(parent, disjoint, covering)
+                entity.add_constraint(inherit_constraint)
+        self.add_eer_entity(entity)
 
-    # def load_entity(self, entity):
-    #     if(entity.attrib["weak"] == "True"):
-    #         entity = EER_Entity(root[i].attrib["name"], True)
-    #     else:
-    #         entity = EER_Entity(root[i].attrib["name"], False)
+    def load_relationship(self, relationship_block):
+        """
+        Loads an EER Relationship from an XML file
+        Helper method for the broader load_eer()
+        """
+        print("LOAD RELATIONSHIP CALLED")
+        # relation = EER_Relationship(root[i].attrib["name"])
+        # relation.entity1 = root[i][0].text
+        # relation.mult1 = root[i][0].attrib["multiplicity"]
+        # relation.entity2 = root[i][1].text
+        # relation.mult2 = root[i][1].attrib["multiplicity"]
+        # self.add_eer_relationship(relation)
 
     def find_entity(self, entity_name):
         """

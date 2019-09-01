@@ -1,6 +1,7 @@
 import arm_constraints
 import eer
 import eer_constraints as EC
+import xml.etree.ElementTree as ET
 
 
 class ARM_Model:
@@ -19,8 +20,6 @@ class ARM_Model:
         Populates the ARM model object from an XML file
     transform_to_eer():
         Applies the set of transformation rules for ARM to EER.
-    save_to_xml():
-        Saves the ARM model object as an XML file.
     """
 
     def __init__(self):
@@ -30,6 +29,66 @@ class ARM_Model:
         Entities must be added with the `add_arm_entity()` method.
         """
         self.arm_entities = []
+
+    def load_arm(self, filename='../ARM_XML_Schema/demo.xml'):
+        tree = ET.parse(filename)
+        root = tree.getroot()
+
+        num_elements = len(root)
+        for i in range(num_elements):
+            if(root[i].attrib["type"] == "Entity"):
+                self.load_entity(root[i])
+
+    def load_entity(self, entity_block):
+        """
+        Loads an ARM entity from an XML file
+        Helper method for the broader load_arm()
+        """
+        entity = ARM_Entity(entity_block.attrib["name"])
+        entity_components = len(entity_block)
+        for j in range(entity_components):
+            if(entity_block[j].attrib["type"] == "attr"):
+                attr_name = entity_block[j].text
+                data_type = entity_block[j].attrib["data_type"]
+                entity.add_attribute(ARM_Attribute(attr_name, data_type))
+            if(entity_block[j].attrib["type"] == "pk"):
+                pk = entity_block[j].text
+                constraint = arm_constraints.PK_Constraint(pk)
+                entity.add_constraint(constraint)
+            if(entity_block[j].attrib["type"] == "fk"):
+                name = entity_block[j].text
+                fk = entity_block[j].attrib["fk"]
+                references = entity_block[j].attrib["references"]
+                constraint = arm_constraints.FK_Constraint(name, fk, references)
+                entity.add_constraint(constraint)
+            if(entity_block[j].attrib["type"] == "inheritance"):
+                parent = entity_block[j].text
+                constraint = arm_constraints.Inheritance_Constraint(parent)
+                entity.add_constraint(constraint)
+            if(entity_block[j].attrib["type"] == "cover"):
+                covered_by = []
+                covered_by_components = len(entity_block[j])
+                for k in range(covered_by_components):
+                    covered_by.append(entity_block[j][k].text)
+                constraint = arm_constraints.Cover_Constraint(covered_by)
+                entity.add_constraint(constraint)
+            if(entity_block[j].attrib["type"] == "disjoint"):
+                disjoint_with = []
+                disjoint_with_components = len(entity_block[j])
+                for k in range(covered_by_components):
+                    disjoint_with.append(entity_block[j][k].text)
+                constraint = arm_constraints.Disjointness_Constraint(disjoint_with)
+                entity.add_constraint(constraint)
+            if(entity_block[j].attrib["type"] == "path_fd"):
+                fd_attribs = []
+                target = entity_block[j].attrib["target"]
+                fd_attrib_components = len(entity_block[j])
+                for k in range(fd_attrib_components):
+                    fd_attribs.append(entity_block[j][k].text)
+                constraint = arm_constraints.Pathfd_Constraint(fd_attribs, target)
+                entity.add_constraint(constraint)
+        self.add_arm_entity(entity)
+
 
     def add_arm_entity(self, new_arm_entity):
         """Adds an ARM_Entity to the model.

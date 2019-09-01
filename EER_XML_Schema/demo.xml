@@ -1,14 +1,16 @@
 <eer>
 
 	<entity name="Professor" type="Entity" weak="False">
-		<attribute type="attr" multi-valued="False" derived="False" optional="False">pid</attribute>
-		<attribute type="attr" multi-valued="False" derived="False" optional="False">pname</attribute>
-		<attribute type="attr" multi-valued="False" derived="False" optional="False">office</attribute>
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">pid</attribute>
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">pname</attribute>
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">office</attribute>
+		<constraint type="identifier">pid</constraint>
+		<constraint type="inheritance" covering="False" disjoint="False">parent</constraint>
 	</entity>
 
 	<entity name="Department" type="Entity" weak="False">
-		<attribute type="attr" multi-valued="False" derived="False" optional="False">dcode</attribute>
-		<attribute type="attr" multi-valued="False" derived="False" optional="False">dname</attribute>
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">dcode</attribute>
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">dname</attribute>
 	</entity>
 
 	<relationship name="WORK" type="Relationship">
@@ -16,16 +18,5 @@
 		<entityName multiplicity="1">Department</entityName>
 	</relationship>
 
-	<constraint type="Constraint">
-		<constraintName>identifier</constraintName>
-		<entityConstrained>Professor</entityConstrained>
-		<attributeConstrained>pid</attributeConstrained>
-	</constraint>
-
-	<constraint type="Constraint">
-		<constraintName>identifier</constraintName>
-		<entityConstrained>Department</entityConstrained>
-		<attributeConstrained>dcode</attributeConstrained>
-	</constraint>
 
 </eer>

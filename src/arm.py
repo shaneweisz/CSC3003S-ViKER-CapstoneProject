@@ -1,5 +1,6 @@
 import arm_constraints
 import eer
+import eer_constraints as EC
 
 
 class ARM_Model:
@@ -45,7 +46,7 @@ class ARM_Model:
         """Getter for arm entities."""
         return self.arm_entities
 
-    def transform_to_eer(self):
+    def transform_to_eer(self, debug=False):
         """Applies the set of transformation rules for ARM to EER.
 
         Returns:
@@ -66,23 +67,32 @@ class ARM_Model:
                         pk = constraint.get_attributes()
             k = len(pk)  # k is the number of PK attributes
 
-            # Count the number of foreign keys
+            # Count the number of foreign keys in the PK
             h = 0
+            fk_references = []  # to be used for knowing which entities participate in the relationship
             for constraint in arm_entity.get_constraints():
                 if type(constraint) == arm_constraints.FK_Constraint \
                         and constraint.get_fk() in pk:
                     h += 1
+                    fk_references.append(constraint.get_references())
 
-            # Step I_B - check if a strong entity should be created
-            entity_added = False
+            if debug is True:
+                print("{}: h = {}, k = {}".format(arm_entity.get_name(), h, k))
+
+            # Step I_B - check if a 'strong entity' should be created
+            entity_to_add = False
             if h == 0:
                 # TODO: Consider candidate key constraint
                 new_ent = eer.EER_Entity(arm_entity.get_name())
-                entity_added = True
+                entity_to_add = True
 
-            # Step I_C - check if a relationship should be created
+            # Step I_C - check if a 'regular relationship' should be created
             if h == k:
                 new_rel = eer.EER_Relationship(arm_entity.get_name())
+                new_rel.set_entity1(fk_references[0])
+                new_rel.set_entity2(fk_references[1])
+                new_rel.set_mult1(("0", "n"))
+                new_rel.set_mult2(("0", "n"))
                 eer_model.add_eer_relationship(new_rel)
 
             # Step I_D - check if a weak entity should be created
@@ -90,10 +100,11 @@ class ARM_Model:
                 pass
 
             # STEP II: Assign PK attributes and declare as identifier
-            if entity_added:
+            if entity_to_add:
                 for attr in pk:
                     new_ent.add_attribute(eer.EER_Attribute(attr))
-                    new_ent.add_primary_key(eer.EER_Attribute(attr))
+                    id_constraint = EC.Identifier_Constraint([attr])
+                    new_ent.add_constraint(id_constraint)
 
                 # STEP III: Extract and add non-pk attributes
                 for attr in arm_entity.get_attributes():
@@ -105,10 +116,10 @@ class ARM_Model:
                                 new_rel = eer.EER_Relationship(
                                     arm_entity.get_name()
                                     + constraint.get_references())
-                                new_rel.entity1 = arm_entity.get_name()
-                                new_rel.entity2 = constraint.get_references()
-                                new_rel.mult1 = "1"
-                                new_rel.mult2 = "1"
+                                new_rel.set_entity1(arm_entity.get_name())
+                                new_rel.set_entity2(constraint.get_references())
+                                new_rel.set_mult1(("1",))
+                                new_rel.set_mult2(("1",))
                                 eer_model.add_eer_relationship(new_rel)
                                 break
                         else:  # Attribute is a regular attribute

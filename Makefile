@@ -2,9 +2,13 @@
 run:
 	python3 src/main.py
 
-# Run `make runARM` to run the ARM Example
+# Run `make runARM n=[1 OR 2 OR 3]` to run the ARM Example
 runARM:
-	python3 src/arm_example.py
+	python3 src/arm_example.py $(n)
+
+# Run `make runEER t=[normal OR weak]` to run the ARM Example
+runEER:
+	python3 src/eer_example.py $(t)
 
 # Run `make gui` to view the static GUI of the application
 gui:

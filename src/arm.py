@@ -69,41 +69,71 @@ class ARM_Model:
 
             # Count the number of foreign keys in the PK
             h = 0
-            fk_references = []  # to be used for knowing which entities participate in the relationship
+            fk_tables = []  # which entities participate in the relationship
             for constraint in arm_entity.get_constraints():
                 if type(constraint) == arm_constraints.FK_Constraint \
                         and constraint.get_fk() in pk:
                     h += 1
-                    fk_references.append(constraint.get_references())
+                    fk_tables.append(constraint.get_references())
 
             if debug is True:
                 print("{}: h = {}, k = {}".format(arm_entity.get_name(), h, k))
 
             # Step I_B - check if a 'strong entity' should be created
             entity_to_add = False
+            weak_entity_to_add = False
+
             if h == 0:
                 # TODO: Consider candidate key constraint
                 new_ent = eer.EER_Entity(arm_entity.get_name())
                 entity_to_add = True
 
             # Step I_C - check if a 'regular relationship' should be created
-            if h == k:
+            elif h == k:
                 new_rel = eer.EER_Relationship(arm_entity.get_name())
-                new_rel.set_entity1(fk_references[0])
-                new_rel.set_entity2(fk_references[1])
+                new_rel.set_entity1(fk_tables[0])
+                new_rel.set_entity2(fk_tables[1])
                 new_rel.set_mult1(("0", "n"))
                 new_rel.set_mult2(("0", "n"))
                 eer_model.add_eer_relationship(new_rel)
 
             # Step I_D - check if a weak entity should be created
-            if h < k:
-                pass
+            elif h < k:
+                new_ent = eer.EER_Entity(arm_entity.get_name(), weak=True)
+                entity_to_add = True
+                weak_entity_to_add = True
 
             # STEP II: Assign PK attributes and declare as identifier
             if entity_to_add:
-                for attr in pk:
-                    new_ent.add_attribute(eer.EER_Attribute(attr))
-                    id_constraint = EC.Identifier_Constraint([attr])
+                if weak_entity_to_add:
+                    # Only add the partial identifier
+                    partial_id = []
+                    for attr in pk:
+                        # Don't add the identifer of the strong entity
+                        for constraint in arm_entity.get_constraints():
+                            if type(constraint) == arm_constraints.FK_Constraint \
+                                    and constraint.get_fk() in pk and attr == constraint.get_fk():
+                                # Add a weak relationship here
+                                new_rel = eer.EER_Relationship(
+                                    arm_entity.get_name()
+                                    + constraint.get_references(), weak=True)
+                                new_rel.set_entity1(arm_entity.get_name())
+                                new_rel.set_entity2(constraint.get_references())
+                                new_rel.set_mult1(("0", "n"))
+                                # Weak entity belongs to one and only one strong entity:
+                                new_rel.set_mult2(("1",))
+                                eer_model.add_eer_relationship(new_rel)
+                                break
+                        else:
+                            partial_id.append(attr)
+                    for attr in partial_id:
+                        new_ent.add_attribute(eer.EER_Attribute(attr))
+                        id_constraint = EC.Identifier_Constraint(partial_id)
+                        new_ent.add_constraint(id_constraint)
+                else:
+                    for attr in pk:
+                        new_ent.add_attribute(eer.EER_Attribute(attr))
+                    id_constraint = EC.Identifier_Constraint(pk)
                     new_ent.add_constraint(id_constraint)
 
                 # STEP III: Extract and add non-pk attributes
@@ -122,7 +152,7 @@ class ARM_Model:
                                 new_rel.set_mult2(("1",))
                                 eer_model.add_eer_relationship(new_rel)
                                 break
-                        else:  # Attribute is a regular attribute
+                        else:  # Otherwise, attribute is a regular attribute
                             new_ent.add_attribute(eer.EER_Attribute(attr.get_name()))
 
                 eer_model.add_eer_entity(new_ent)

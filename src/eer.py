@@ -132,34 +132,85 @@ class EER_Model:
         arm_model = arm.ARM_Model()        # will store the new ARM model
 
         # Create the relations for entities
-        for eer_entity in self.eer_entities:
-            # STEP A - Table Declaration
+        for eer_entity in self.__eer_entities:
+            # STEP I: If the entity is 'strong'
+            if not eer_entity.is_weak():
+                # STEP I_A - Table Declaration
 
-            name = eer_entity.get_name()
-            arm_entity = arm.ARM_Entity(name)
-            arm_entity.add_attribute(arm.ARM_Attribute("self", "OID"))
-            for eer_attr in eer_entity.get_attributes():
-                arm_attr = arm.ARM_Attribute(eer_attr.get_name(), "anyType")
-                arm_entity.add_attribute(arm_attr)  # e.g "Runtime (anyType)"
+                name = eer_entity.get_name()
+                arm_entity = arm.ARM_Entity(name)
+                arm_entity.add_attribute(arm.ARM_Attribute("self", "OID"))
+                for eer_attr in eer_entity.get_attributes():
+                    arm_attr = arm.ARM_Attribute(eer_attr.get_name(), "anyType")
+                    arm_entity.add_attribute(arm_attr)  # e.g "Runtime (anyType)"
 
-            # STEP B - Foreign Keys - done in the relationships section below
+                # STEP I_B - Foreign Keys - done in the relationships section below
 
-            # STEP C - Identifier
-            pk = eer_entity.get_identifier()
-            arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))  # e.g. "MovieID", and recall arm's identifier is a list # noqa
-            arm_entity.add_constraint(arm_constraints.Pathfd_Constraint(
-                (id.get_name() for id in eer_entity.get_identifiers()), "self"))
-            arm_model.add_arm_entity(arm_entity)
+                # STEP I_C - Primary Key
+
+                # Extract the identifier
+                pk = eer_entity.get_identifier()
+                arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))
+                arm_entity.add_constraint(arm_constraints.Pathfd_Constraint(pk, "self"))
+                arm_model.add_arm_entity(arm_entity)
+            else:
+                # STEP II: If the entity is 'weak'
+                # STEP II_A - Table Declaration
+
+                name = eer_entity.get_name()
+                arm_entity = arm.ARM_Entity(name)
+                arm_entity.add_attribute(arm.ARM_Attribute("self", "OID"))
+                for eer_attr in eer_entity.get_attributes():
+                    arm_attr = arm.ARM_Attribute(eer_attr.get_name(), "anyType")
+                    arm_entity.add_attribute(arm_attr)  # e.g "Runtime (anyType)"
+
+                # STEP II_B - Foreign Keys - done in the relationships section below
+
+                # STEP II_C - Primary Key
+
+                # Extract the PARTIAL identifier
+                pk = eer_entity.get_identifier()
+                arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))
+                arm_entity.add_constraint(arm_constraints.Pathfd_Constraint(pk, "self"))
+                arm_model.add_arm_entity(arm_entity)
 
         # Create the relations for relationships
-        for relationship in self.eer_relationships:
+        for relationship in self.__eer_relationships:
             name = relationship.get_name()
             entity1 = relationship.get_entity1()
             entity2 = relationship.get_entity2()
             mult1 = relationship.get_mult1()
             mult2 = relationship.get_mult2()
 
-            if (mult1 == "1" and mult2 == "1") or (mult1 == "n" and mult2 == "1"):
+            # Check for WEAK relationship
+            # If so, extend the pathfd constraint of the WEAK entity beyond the partial identifier accordinly
+            if relationship.is_weak():
+                # We must first find whether it is entity1 or entity2 that is WEAK
+                weak_entity = entity1  # assume it is entity1, then check if it is actually entity2
+                for ent in self.__eer_entities:
+                    if ent.get_name() == entity2 and ent.is_weak():
+                        weak_entity = entity2
+
+                for ent in arm_model.get_arm_entities():
+                    if ent.get_name() == weak_entity:
+                        victim_entity = ent
+                        for constraint in victim_entity.get_constraints():
+                            if type(constraint) == arm_constraints.Pathfd_Constraint:
+                                if constraint.get_target() == 'self':
+                                    # If here, we have found the appropriate Pathfd to edit
+                                    if weak_entity == entity1:
+                                        constraint.set_attributes(
+                                            constraint.get_attributes() + [entity2.lower()])
+                                    else:
+                                        constraint.set_attributes(
+                                            constraint.get_attributes() + [entity1.lower()])
+                        break
+
+            # Check that multiplicities exist, before we iterate over them using 'in' in the for loop below
+            if mult1 is None or mult2 is None:
+                continue
+
+            if ("n" not in mult1 and "n" not in mult2) or ("n" in mult1 and "n" not in mult2):
                 # Then one to one, or many-to-one relationship
                 # No need for a new relation - just add foreign key to first entity
 
@@ -175,8 +226,10 @@ class EER_Model:
                 fk_name = entity2.lower()
                 victim_entity.add_attribute(arm.ARM_Attribute(fk_name, "OID"))
                 victim_entity.add_constraint(
-                    arm_constraints.FK_Constraint(fk_name, fk_name, entity2))
-            elif mult1 == "1" and mult2 == "n":
+                    arm_constraints.FK_Constraint(fk_name,
+                                                  fk_name,
+                                                  entity2))
+            elif "n" not in mult1 and "n" in mult2:
                 # One-to-many relationship
                 # Add foreign key to the entity on the n side of the relationship
 
@@ -368,11 +421,12 @@ class EER_Entity:
         Get the identifier(s) constraint on the entity
         Returns a str list in format ["identifier1", "identifier2", etc...]
         """
+        identifiers = None
         for constraint in self.__constraints:
-            identifiers = []
             if(type(constraint) == eer_constraints.Identifier_Constraint):
                 identifiers = constraint.get_identifier()
-            return identifiers
+                break
+        return identifiers
 
     def is_inherited_from(self):
         """

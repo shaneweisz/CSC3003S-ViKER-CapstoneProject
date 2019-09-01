@@ -1,5 +1,6 @@
 from arm import ARM_Model, ARM_Entity, ARM_Attribute
 import arm_constraints
+import sys
 
 
 def arm_example():
@@ -92,6 +93,16 @@ def arm_example3():
 
 
 if __name__ == '__main__':
-    arm_model = arm_example3()
-    print(arm_model)
-    print(arm_model.transform_to_eer(debug=False))
+    n = sys.argv[1]
+    if n == "1":
+        arm_model = arm_example()
+        print(arm_model)
+        print(arm_model.transform_to_eer(debug=False))
+    elif n == "2":
+        arm_model = arm_example2()
+        print(arm_model)
+        print(arm_model.transform_to_eer(debug=False))
+    else:
+        arm_model = arm_example3()
+        print(arm_model)
+        print(arm_model.transform_to_eer(debug=False))

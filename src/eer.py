@@ -57,7 +57,7 @@ class EER_Model:
         assert type(new_eer_relationship) == EER_Relationship
         self.__eer_relationships.append(new_eer_relationship)
 
-    def load_eer(self, filename='../EER_XML_Schema/demo.xml'):
+    def load_eer(self, filename='EER_XML_Schema/demo.xml'):
         """
         Loads and EER model from an XML file into a python object representation
         """
@@ -107,30 +107,25 @@ class EER_Model:
         """
         relationship = EER_Relationship(relationship_block.attrib["name"])
         relationship_components = len(relationship_block)
+        ent1 = True
         for j in range(relationship_components):
             if(relationship_block[j].attrib["type"] == "attr"):
                 attr_name = relationship_block[j].text
                 multi_valued = self.parse_bool(relationship_block[j].attrib["multi_valued"])
                 derived = self.parse_bool(relationship_block[j].attrib["derived"])
                 optional = self.parse_bool(relationship_block[j].attrib["optional"])
-<<<<<<< HEAD
                 relationship.add_attribute(EER_Attribute(
                     attr_name, multi_valued, derived, optional))
             if(relationship_block[j].attrib["type"] == "ent"):
-                relationship.set_entity1(relationship_block[j].text)
-                relationship.set_mult1(
-                    (relationship_block[j].attrib["mult_left"], relationship_block[j].attrib["mult_right"]))
-                relationship.set_entity2(relationship_block[j].text)
-                relationship.set_mult2(
-                    (relationship_block[j].attrib["mult_left"], relationship_block[j].attrib["mult_right"]))
-=======
-                relationship.add_attribute(EER_Attribute(attr_name, multi_valued, derived, optional))
-            if(relationship_block[j].attrib["type"] == "ent"):
-                relationship.set_entity1(relationship_block[j].text)
-                relationship.set_mult1((relationship_block[j].attrib["mult_left"], relationship_block[j].attrib["mult_right"]))
-                relationship.set_entity2(relationship_block[j].text)
-                relationship.set_mult2((relationship_block[j].attrib["mult_left"], relationship_block[j].attrib["mult_right"]))
->>>>>>> bbcd5be02a517f6382a3a5ac0e324d6b3d221547
+                if ent1 is True:
+                    relationship.set_entity1(relationship_block[j].text)
+                    relationship.set_mult1(
+                        (relationship_block[j].attrib["mult_left"], relationship_block[j].attrib["mult_right"]))
+                    ent1 = False
+                else:
+                    relationship.set_entity2(relationship_block[j].text)
+                    relationship.set_mult2(
+                        (relationship_block[j].attrib["mult_left"], relationship_block[j].attrib["mult_right"]))
         self.add_eer_relationship(relationship)
 
     def parse_bool(self, value):

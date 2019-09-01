@@ -61,9 +61,18 @@ class Controller():
                                                    ("xml files", "*.xml"),
                                                    ("all files", "*.*")))
         if self.arm_filename != "":
-            messagebox.showinfo("Load",
-                                "File Directory Selected:\n{}"
-                                .format(self.arm_filename))
+            self.gui.txt_eer.delete("1.0", tk.END)
+            self.gui.txt_arm.delete("1.0", tk.END)
+            self.arm_model = arm.ARM_Model()
+            self.arm_model.load_arm(self.arm_filename)
+            self.gui.txt_arm.insert(tk.END, self.arm_model.__str__())
+            self.arm_loaded = True
+            self.eer_loaded = False
+            self.gui.btn_transform.config(text="Transform to EER")
+            self.gui.btn_transform.config(state="normal")
+            # messagebox.showinfo("Load",
+            #                     "File Directory Selected:\n{}"
+            #                     .format(self.arm_filename))
         else:
             # User clicked cancel
             self.arm_filename = "No ARM file selected yet"
@@ -104,4 +113,8 @@ class Controller():
             self.gui.btn_transform.config(state="disabled")
             self.arm_loaded = True
         elif self.arm_loaded:
-            pass  # TO DO: Implement transform from ARM to EER
+            self.eer_model = self.arm_model.transform_to_eer()
+            self.gui.txt_eer.insert(tk.END, self.eer_model.__str__())
+            self.gui.btn_transform.config(text="Transform")
+            self.gui.btn_transform.config(state="disabled")
+            self.eer_loaded = True

@@ -1,26 +1,24 @@
 <arm>
 
 	<entity name="Professor" type="Entity">
-		<attribute type="attr" data_type="string">pid</attribute>
-		<attribute type="attr" data_type="string">pname</attribute>
-		<attribute type="attr" data_type="string">office</attribute>
-		<constraint type="pk">pid</constraint>
-    <constraint type="fk" fk="office" references="department">fk_name</constraint>
-    <constraint type="inheritance">person</constraint>
-    <constraint type="cover">
-      <covered_by>a</covered_by>
-      <covered_by>b</covered_by>
-      <covered_by>c</covered_by>
+		<attribute type="attr" data_type="OID">self</attribute>
+		<attribute type="attr" data_type="STRING">pid</attribute>
+		<attribute type="attr" data_type="STRING">pname</attribute>
+		<attribute type="attr" data_type="STRING">department</attribute>
+		<constraint type="pk">self</constraint>
+    <constraint type="fk" fk="department" references="Department">dept</constraint>
+    <constraint type="path_fd" target="self">
+      <fd_attrib>pid</fd_attrib>
     </constraint>
-    <constraint type="disjoint">
-      <disjoint_with>x</disjoint_with>
-      <disjoint_with>y</disjoint_with>
-      <disjoint_with>z</disjoint_with>
-    </constraint>
-    <constraint type="path_fd" target="blabla">
-      <fd_attrib>d</fd_attrib>
-      <fd_attrib>e</fd_attrib>
-      <fd_attrib>f</fd_attrib>
+	</entity>
+
+	<entity name="Department" type="Entity">
+		<attribute type="attr" data_type="OID">self</attribute>
+		<attribute type="attr" data_type="STRING">dcode</attribute>
+		<attribute type="attr" data_type="STRING">dname</attribute>
+		<constraint type="pk">self</constraint>
+    <constraint type="path_fd" target="self">
+      <fd_attrib>dcode</fd_attrib>
     </constraint>
 	</entity>
 

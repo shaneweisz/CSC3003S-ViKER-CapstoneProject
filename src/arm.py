@@ -30,7 +30,7 @@ class ARM_Model:
         """
         self.arm_entities = []
 
-    def load_arm(self, filename='../ARM_XML_Schema/demo.xml'):
+    def load_arm(self, filename='../ARM_XML_Schema/template.xml'):
         tree = ET.parse(filename)
         root = tree.getroot()
 
@@ -88,7 +88,6 @@ class ARM_Model:
                 constraint = arm_constraints.Pathfd_Constraint(fd_attribs, target)
                 entity.add_constraint(constraint)
         self.add_arm_entity(entity)
-
 
     def add_arm_entity(self, new_arm_entity):
         """Adds an ARM_Entity to the model.

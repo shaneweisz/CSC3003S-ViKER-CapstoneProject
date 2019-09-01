@@ -15,8 +15,9 @@
 	</entity>
 
 	<relationship name="WORK" type="Relationship">
-		<entityName mult_left="1" mult_right="n">Professor</entityName>
-		<entityName mult_left="0" mult_right="1">Department</entityName>
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">pid</attribute>
+		<related_entity type="ent" mult_left="1" mult_right="n">Professor</related_entity>
+		<related_entity type="ent" mult_left="0" mult_right="1">Department</related_entity>
 	</relationship>
 
 

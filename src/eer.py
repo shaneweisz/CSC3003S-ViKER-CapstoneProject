@@ -106,12 +106,22 @@ class EER_Model:
         Helper method for the broader load_eer()
         """
         relationship = EER_Relationship(relationship_block.attrib["name"])
-        relationship.set_entity1(relationship_block[0].text)
-        relationship.set_mult1(
-            (relationship_block[0].attrib["mult_left"], relationship_block[0].attrib["mult_right"]))
-        relationship.set_entity2(relationship_block[1].text)
-        relationship.set_mult2(
-            (relationship_block[1].attrib["mult_left"], relationship_block[1].attrib["mult_right"]))
+        relationship_components = len(relationship_block)
+        for j in range(relationship_components):
+            if(relationship_block[j].attrib["type"] == "attr"):
+                attr_name = relationship_block[j].text
+                multi_valued = self.parse_bool(relationship_block[j].attrib["multi_valued"])
+                derived = self.parse_bool(relationship_block[j].attrib["derived"])
+                optional = self.parse_bool(relationship_block[j].attrib["optional"])
+                relationship.add_attribute(EER_Attribute(
+                    attr_name, multi_valued, derived, optional))
+            if(relationship_block[j].attrib["type"] == "ent"):
+                relationship.set_entity1(relationship_block[j].text)
+                relationship.set_mult1(
+                    (relationship_block[j].attrib["mult_left"], relationship_block[j].attrib["mult_right"]))
+                relationship.set_entity2(relationship_block[j].text)
+                relationship.set_mult2(
+                    (relationship_block[j].attrib["mult_left"], relationship_block[j].attrib["mult_right"]))
         self.add_eer_relationship(relationship)
 
     def parse_bool(self, value):
@@ -284,6 +294,8 @@ class EER_Relationship:
     ----------
     name : str
         The name of the relationship.
+    attributes : list
+        List of attributes
     entity1 : str
         The name of the first entity in the relationship.
     entity2 : str
@@ -298,11 +310,25 @@ class EER_Relationship:
 
     def __init__(self, name, entity1=None, entity2=None, mult1=None, mult2=None, weak=False):
         self.__name = name
+        self.__attributes = []
         self.__entity1 = entity1
         self.__entity2 = entity2
         self.__mult1 = mult1
         self.__mult2 = mult2
         self.__weak = weak
+
+    def add_attribute(self, attribute):
+        """Add an attribute to the relationship"""
+        self.__attributes.append(attribute)
+
+    def get_attributes(self, index=-1):
+        """
+        Returns a list of all the attributes unless an index is supplied,
+        in which case on the attribute at that index is returned
+        """
+        if(index == -1):
+            return self.__attributes
+        return self.__attributes[index]
 
     def set_name(self, name):
         self.__name = name
@@ -356,7 +382,9 @@ class EER_Relationship:
         relationship += "Entity1: [entity_name = {}] [multiplicity = {}]\n".format(
             self.__entity1, self.__mult1)
         relationship += "Entity2: [entity_name = {}] [multiplicity = {}]".format(
-            self.__entity2, self.__mult2)
+            self.__entity2, self.__mult2) + "\n"
+        for attribute in self.__attributes:
+            relationship += str(attribute) + "\n"
         return relationship
 
 

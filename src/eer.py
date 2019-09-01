@@ -77,7 +77,8 @@ class EER_Model:
         Loads an EER entity from an XML file
         Helper method for the broader load_eer()
         """
-        entity = EER_Entity(entity_block.attrib["name"], self.parse_bool(entity_block.attrib["weak"]))
+        entity = EER_Entity(entity_block.attrib["name"],
+                            self.parse_bool(entity_block.attrib["weak"]))
         entity_components = len(entity_block)
         for j in range(entity_components):
             if(entity_block[j].attrib["type"] == "attr"):
@@ -94,7 +95,8 @@ class EER_Model:
                 parent = entity_block[j].text
                 disjoint = self.parse_bool(entity_block[j].attrib["disjoint"])
                 covering = self.parse_bool(entity_block[j].attrib["covering"])
-                inherit_constraint = eer_constraints.Inheritance_Constraint(parent, disjoint, covering)
+                inherit_constraint = eer_constraints.Inheritance_Constraint(
+                    parent, disjoint, covering)
                 entity.add_constraint(inherit_constraint)
         self.add_eer_entity(entity)
 
@@ -105,9 +107,11 @@ class EER_Model:
         """
         relationship = EER_Relationship(relationship_block.attrib["name"])
         relationship.set_entity1(relationship_block[0].text)
-        relationship.set_mult1((relationship_block[0].attrib["mult_left"], relationship_block[0].attrib["mult_right"]))
+        relationship.set_mult1(
+            (relationship_block[0].attrib["mult_left"], relationship_block[0].attrib["mult_right"]))
         relationship.set_entity2(relationship_block[1].text)
-        relationship.set_mult2((relationship_block[1].attrib["mult_left"], relationship_block[1].attrib["mult_right"]))
+        relationship.set_mult2(
+            (relationship_block[1].attrib["mult_left"], relationship_block[1].attrib["mult_right"]))
         self.add_eer_relationship(relationship)
 
     def parse_bool(self, value):

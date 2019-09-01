@@ -11,6 +11,7 @@
 	<entity name="Department" type="Entity" weak="False">
 		<attribute type="attr" multi_valued="False" derived="False" optional="False">dcode</attribute>
 		<attribute type="attr" multi_valued="False" derived="False" optional="False">dname</attribute>
+		<constraint type="identifier">dcode</constraint>
 	</entity>
 
 	<relationship name="WORK" type="Relationship">

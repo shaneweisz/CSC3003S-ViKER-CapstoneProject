@@ -1,0 +1,50 @@
+<arm>
+    <entity name="Student" type="Entity">
+		<attribute type="attr" data_type="OID">self</attribute>
+		<attribute type="attr" data_type="INT">Sno</attribute>
+		<attribute type="attr" data_type="STRING">name</attribute>
+        <attribute type="attr" data_type="STRING">other</attribute>
+		<constraint type="pk">self</constraint>
+        <constraint type="path_fd" target="self">
+          <fd_attrib>Sno</fd_attrib>
+        </constraint>
+        <constraint type="cover">
+          <covered_by>Undergrad</covered_by>
+          <covered_by>Postgrad</covered_by>
+        </constraint>
+	</entity>
+
+    <entity name="Undergrad" type="Entity">
+		<attribute type="attr" data_type="OID">self</attribute>
+        <attribute type="attr" data_type="INT">Sno</attribute>
+        <attribute type="attr" data_type="STRING">name</attribute>
+        <attribute type="attr" data_type="STRING">other</attribute>
+		<attribute type="attr" data_type="STRING">major</attribute>
+		<constraint type="pk">self</constraint>
+        <constraint type="path_fd" target="self">
+          <fd_attrib>Sno</fd_attrib>
+        </constraint>
+        <constraint type="inheritance">Student</constraint>
+        <constraint type="disjoint">
+          <disjoint_with>Postgrad</disjoint_with>
+        </constraint>
+	</entity>
+
+    <entity name="Postgrad" type="Entity">
+		<attribute type="attr" data_type="OID">self</attribute>
+        <attribute type="attr" data_type="INT">Sno</attribute>
+        <attribute type="attr" data_type="STRING">name</attribute>
+        <attribute type="attr" data_type="STRING">other</attribute>
+		<attribute type="attr" data_type="STRING">supervisor</attribute>
+		<constraint type="pk">self</constraint>
+        <constraint type="path_fd" target="self">
+          <fd_attrib>Sno</fd_attrib>
+        </constraint>
+        <constraint type="inheritance">Student</constraint>
+        <constraint type="disjoint">
+          <disjoint_with>Undergrad</disjoint_with>
+        </constraint>
+	</entity>
+
+
+</arm>

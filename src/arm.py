@@ -75,7 +75,7 @@ class ARM_Model:
             if(entity_block[j].attrib["type"] == "disjoint"):
                 disjoint_with = []
                 disjoint_with_components = len(entity_block[j])
-                for k in range(covered_by_components):
+                for k in range(disjoint_with_components):
                     disjoint_with.append(entity_block[j][k].text)
                 constraint = arm_constraints.Disjointness_Constraint(disjoint_with)
                 entity.add_constraint(constraint)
@@ -212,6 +212,11 @@ class ARM_Model:
                                 break
                         else:  # Otherwise, attribute is a regular attribute
                             new_ent.add_attribute(eer.EER_Attribute(attr.get_name()))
+
+                # STEPS IV - VI: Inheritance, Covering and Disjointness
+                for constraint in arm_entity.get_constraints():
+                    if type(constraint) == arm_constraints.Inheritance_Constraint:
+                        pass
 
                 eer_model.add_eer_entity(new_ent)
 

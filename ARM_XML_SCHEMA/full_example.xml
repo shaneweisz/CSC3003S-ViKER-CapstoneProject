@@ -21,7 +21,7 @@
         <constraint type="path_fd" target="self">
           <fd_attrib>dcode</fd_attrib>
         </constraint>
-	</entity> -->
+	</entity>
 
     <entity name="Supplier" type="Entity">
 		<attribute type="attr" data_type="OID">self</attribute>

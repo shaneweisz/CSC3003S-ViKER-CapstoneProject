@@ -57,7 +57,7 @@ class EER_Model:
         assert type(new_eer_relationship) == EER_Relationship
         self.__eer_relationships.append(new_eer_relationship)
 
-    def load_eer(self, filename='EER_XML_Schema/demo.xml'):
+    def load_eer(self, filename='EER_XML_Examples/EER_ProfDept.xml'):
         """
         Loads and EER model from an XML file into a python object representation
         """
@@ -106,6 +106,9 @@ class EER_Model:
         Helper method for the broader load_eer()
         """
         relationship = EER_Relationship(relationship_block.attrib["name"])
+        weak = self.parse_bool(relationship_block.attrib["weak"])
+        print(weak)
+        relationship.set_weak(weak)
         relationship_components = len(relationship_block)
         ent1 = True
         for j in range(relationship_components):
@@ -114,8 +117,10 @@ class EER_Model:
                 multi_valued = self.parse_bool(relationship_block[j].attrib["multi_valued"])
                 derived = self.parse_bool(relationship_block[j].attrib["derived"])
                 optional = self.parse_bool(relationship_block[j].attrib["optional"])
-                relationship.add_attribute(EER_Attribute(
-                    attr_name, multi_valued, derived, optional))
+                relationship.add_attribute(EER_Attribute(attr_name,
+                                                         multi_valued,
+                                                         derived,
+                                                         optional))
             if(relationship_block[j].attrib["type"] == "ent"):
                 if ent1 is True:
                     relationship.set_entity1(relationship_block[j].text)

@@ -1,11 +1,9 @@
 <eer>
-
 	<entity name="Professor" type="Entity" weak="False">
 		<attribute type="attr" multi_valued="False" derived="False" optional="False">pid</attribute>
 		<attribute type="attr" multi_valued="False" derived="False" optional="False">pname</attribute>
 		<attribute type="attr" multi_valued="False" derived="False" optional="False">office</attribute>
 		<constraint type="identifier">pid</constraint>
-		<constraint type="inheritance" covering="False" disjoint="False">parent</constraint>
 	</entity>
 
 	<entity name="Department" type="Entity" weak="False">
@@ -14,11 +12,8 @@
 		<constraint type="identifier">dcode</constraint>
 	</entity>
 
-	<relationship name="WORK" type="Relationship">
-		<attribute type="attr" multi_valued="False" derived="False" optional="False">pid</attribute>
+	<relationship name="WORK" type="Relationship" weak="False">
 		<related_entity type="ent" mult_left="1" mult_right="n">Professor</related_entity>
 		<related_entity type="ent" mult_left="0" mult_right="1">Department</related_entity>
 	</relationship>
-
-
 </eer>

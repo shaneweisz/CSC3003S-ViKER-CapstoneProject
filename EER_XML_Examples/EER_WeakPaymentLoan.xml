@@ -1,0 +1,21 @@
+<eer>
+
+	<entity name="Payment" type="Entity" weak="True">
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">paytime</attribute>
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">amt</attribute>
+        <attribute type="attr" multi_valued="False" derived="False" optional="False">type</attribute>
+        <constraint type="identifier">paytime</constraint>
+	</entity>
+
+	<entity name="Loan" type="Entity" weak="False">
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">LID</attribute>
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">other</attribute>
+		<constraint type="identifier">LID</constraint>
+	</entity>
+
+
+	<relationship name="Pays" type="Relationship" weak="True">
+		<related_entity type="ent" mult_left="0" mult_right="n">Payment</related_entity>
+		<related_entity type="ent" mult_left="1" mult_right="">Loan</related_entity>
+	</relationship>
+</eer>

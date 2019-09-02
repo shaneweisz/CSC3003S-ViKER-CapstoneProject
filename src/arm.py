@@ -215,13 +215,41 @@ class ARM_Model:
                             new_ent.add_attribute(eer.EER_Attribute(attr.get_name()))
 
                 # STEPS IV - VI: Inheritance, Covering and Disjointness
+                parent = None
+                covered_constraint = False
+                disjointess_constraint = False
                 for constraint in arm_entity.get_constraints():
+                    # Check if this entity has a parent
                     if type(constraint) == arm_constraints.Inheritance_Constraint:
-                        pass
+                        parent = constraint.get_parent()
+                    # Check if this entity is disjoint with any other entity
+                    if type(constraint) == arm_constraints.Disjointness_Constraint:
+                        disjointess_constraint = True
+                if parent is not None:
+                    # Then this entity has a parent
+                    # Now check if this inheritance needs a covering constraint
+                    parent_ent = self.find_entity(parent)
+                    for parent_constraint in parent_ent.get_constraints():
+                        if type(parent_constraint) == arm_constraints.Cover_Constraint:
+                            covered_constraint = True
+
+                    # Finally, add the appropriate specialisation relationship
+                    # constraint to the EER entity
+                    new_ent.add_constraint(
+                        EC.Inheritance_Constraint(parent,
+                                                  disjointess_constraint,
+                                                  covered_constraint))
 
                 eer_model.add_eer_entity(new_ent)
 
         return eer_model
+
+    def find_entity(self, entity_name):
+        """Returns the ARM entity object corresponding to a given entity name"""
+        for ent in self.arm_entities:
+            if ent.get_name() == entity_name:
+                return ent
+        return None
 
     def __len__(self):
         """ Returns the number of entities that the model consists of. """

@@ -1,0 +1,34 @@
+<arm>
+    <entity name="Supplier" type="Entity">
+		<attribute type="attr" data_type="OID">self</attribute>
+		<attribute type="attr" data_type="STRING">sname</attribute>
+        <attribute type="attr" data_type="STRING">slocation</attribute>
+		<constraint type="pk">self</constraint>
+        <constraint type="path_fd" target="self">
+          <fd_attrib>sname</fd_attrib>
+        </constraint>
+	</entity>
+
+    <entity name="Part" type="Entity">
+		<attribute type="attr" data_type="OID">self</attribute>
+		<attribute type="attr" data_type="INT">PID</attribute>
+        <attribute type="attr" data_type="STRING">pname</attribute>
+		<constraint type="pk">self</constraint>
+        <constraint type="path_fd" target="self">
+          <fd_attrib>PID</fd_attrib>
+        </constraint>
+	</entity>
+
+    <entity name="Supplies" type="Entity">
+		<attribute type="attr" data_type="OID">self</attribute>
+        <attribute type="attr" data_type="OID">sname</attribute>
+		<attribute type="attr" data_type="OID">PID</attribute>
+		<constraint type="pk">self</constraint>
+        <constraint type="path_fd" target="self">
+          <fd_attrib>sname</fd_attrib>
+          <fd_attrib>PID</fd_attrib>
+        </constraint>
+        <constraint type="fk" fk="sname" references="Supplier">supplier</constraint>
+        <constraint type="fk" fk="PID" references="Part">part</constraint>
+	</entity>
+</arm>

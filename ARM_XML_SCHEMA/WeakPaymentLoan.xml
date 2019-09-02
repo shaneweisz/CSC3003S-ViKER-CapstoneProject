@@ -1,0 +1,27 @@
+<arm>
+<entity name="Payment" type="Entity">
+    <attribute type="attr" data_type="OID">self</attribute>
+    <attribute type="attr" data_type="OID">LID</attribute>
+    <attribute type="attr" data_type="DATE">paytime</attribute>
+    <attribute type="attr" data_type="INT">amt</attribute>
+    <attribute type="attr" data_type="STRING">type</attribute>
+    <constraint type="pk">self</constraint>
+    <constraint type="path_fd" target="self">
+      <fd_attrib>LID</fd_attrib>
+      <fd_attrib>paytime</fd_attrib>
+    </constraint>
+    <constraint type="fk" fk="LID" references="Loan">loan</constraint>
+</entity>
+
+<entity name="Loan" type="Entity">
+    <attribute type="attr" data_type="OID">self</attribute>
+    <attribute type="attr" data_type="OID">LID</attribute>
+    <attribute type="attr" data_type="STRING">Other</attribute>
+    <constraint type="pk">self</constraint>
+    <constraint type="path_fd" target="self">
+      <fd_attrib>LID</fd_attrib>
+    </constraint>
+</entity>
+
+
+</arm>

@@ -1,0 +1,24 @@
+<arm>
+    <entity name="Professor" type="Entity">
+		<attribute type="attr" data_type="OID">self</attribute>
+		<attribute type="attr" data_type="INT">pnum</attribute>
+		<attribute type="attr" data_type="STRING">pname</attribute>
+        <attribute type="attr" data_type="STRING">office</attribute>
+		<attribute type="attr" data_type="OID">department</attribute>
+		<constraint type="pk">self</constraint>
+        <constraint type="fk" fk="department" references="Department">dept</constraint>
+        <constraint type="path_fd" target="self">
+          <fd_attrib>pnum</fd_attrib>
+        </constraint>
+	</entity>
+
+	<entity name="Department" type="Entity">
+		<attribute type="attr" data_type="OID">self</attribute>
+		<attribute type="attr" data_type="STRING">dcode</attribute>
+		<attribute type="attr" data_type="STRING">dname</attribute>
+		<constraint type="pk">self</constraint>
+        <constraint type="path_fd" target="self">
+          <fd_attrib>dcode</fd_attrib>
+        </constraint>
+	</entity> -->
+</arm>

@@ -83,7 +83,7 @@ def arm_example3():
 
     ent2 = ARM_Entity("Loan")
     ent2.add_attribute(ARM_Attribute("self", "OID"))
-    ent2.add_attribute(ARM_Attribute("LID", "OID"))
+    ent2.add_attribute(ARM_Attribute("LID", "INT"))
     ent2.add_attribute(ARM_Attribute("other", "STRING"))
     ent2.add_constraint(arm_constraints.PK_Constraint("self"))
     ent2.add_constraint(arm_constraints.Pathfd_Constraint(["LID"], "self"))

@@ -57,7 +57,7 @@ class EER_Model:
         assert type(new_eer_relationship) == EER_Relationship
         self.__eer_relationships.append(new_eer_relationship)
 
-    def load_eer(self, filename='EER_XML_Examples/EER_ProfDept.xml'):
+    def load_eer(self, filename='../EER_XML_Examples/EER_WeakPaymentLoan.xml'):
         """
         Loads and EER model from an XML file into a python object representation
         """
@@ -107,7 +107,6 @@ class EER_Model:
         """
         relationship = EER_Relationship(relationship_block.attrib["name"])
         weak = self.parse_bool(relationship_block.attrib["weak"])
-        print(weak)
         relationship.set_weak(weak)
         relationship_components = len(relationship_block)
         ent1 = True
@@ -384,16 +383,27 @@ class EER_Relationship:
 
     def __str__(self):
         """A textual representation of an EER Relationship"""
-        relationship = "RELATIONSHIP: [relationship_name = {}] [weak = {}]".format(
-            self.__name, self.__weak)
+        relationship = self.__name + " ("
+        if self.__weak == True:
+            relationship += "WEAK "
+        relationship += "RELATIONSHIP)"
         underline = "\n" + "-"*len(relationship) + "\n"
         relationship += underline
-        relationship += "Entity1: [entity_name = {}] [multiplicity = {}]\n".format(
-            self.__entity1, self.__mult1)
-        relationship += "Entity2: [entity_name = {}] [multiplicity = {}]".format(
-            self.__entity2, self.__mult2) + "\n"
-        for attribute in self.__attributes:
-            relationship += str(attribute) + "\n"
+        if(len(self.__attributes) > 0):
+            relationship += "Attributes:\n"
+            for attribute in self.__attributes:
+                relationship += "   " + str(attribute) + "\n"
+        relationship += "Entities:\n"
+        relationship += "   " + self.__entity1 + " (" + self.__mult1[0]
+        if(self.__mult1[0] != None):
+            relationship += ".." + self.__mult1[1]
+        relationship += ")\n"
+
+        relationship += "   " + self.__entity2 + " (" + self.__mult2[0]
+        if(self.__mult2[1] != ""):
+            relationship += ".." + self.__mult2[1]
+        relationship += ")\n"
+
         return relationship
 
 
@@ -469,37 +479,32 @@ class EER_Entity:
                 break
         return identifiers
 
-    def is_inherited_from(self):
-        """
-        Checks if the entity has any children
-        Returns True if it has children, otherwise False
-        """
-        has_children = False
-        for constraint in self.__constraints:
-            if(type(constraint) == eer_constraints.Inheritance_Constraint):
-                has_children = True
-        return has_children
-
     def get_inheritance_constraint(self):
         """
         Returns the Inheritance Constraint object associated with this entity1
         NOTE - this method should only be called after checking if the entity is
         inherited from by calling the is_inherited_from() method first
         """
-        assert(self.is_inherited_from())
         for constraint in self.__constraints:
             if(type(constraint) == eer_constraints.Inheritance_Constraint):
                 return constraint
 
     def __str__(self):
         """A textual representation of an EER Entity"""
-        entity = "ENTITY: [entity_name = {}] [weak = {}]".format(self.__name, self.__weak)
+        entity = self.__name + " ("
+        if self.__weak == True:
+            entity += "WEAK "
+        entity += "ENTITY TYPE)"
         underline = "\n" + "-"*len(entity) + "\n"
         entity += underline
+        entity += "Attributes:\n"
         for attribute in self.__attributes:
-            entity += str(attribute) + "\n"
+            entity += "   " + str(attribute) + "\n"
+        entity += "Constraints:\n   "
         for constraint in self.__constraints:
-            entity += str(constraint) + "\n"
+            if(type(constraint) == eer_constraints.Identifier_Constraint and self.__weak == True):
+                entity += "Partial "
+            entity += str(constraint) + "\n   "
         return entity
 
 
@@ -550,4 +555,24 @@ class EER_Attribute:
 
     def __str__(self):
         """A textual representation of an EER Attribute"""
-        return "Attribute: [attr_name = {}] [multi-valued = {}] [derived = {}] [optional = {}]".format(self.__name, self.__multi_valued, self.__derived, self.__optional)
+        attribute = self.__name
+        previous = False
+        if(self.__multi_valued or self.__derived or self.__optional):
+            attribute += " ("
+        if (self.__multi_valued):
+            attribute += "multi-valued"
+            previous = True
+        if (self.__derived):
+            if(previous):
+                attribute += ", derived"
+            else:
+                attribute += "derived"
+            previous = True
+        if (self.__optional):
+            if(previous):
+                attribute += ", optional"
+            attribute += "optional"
+            previous = True
+        if(previous == True):
+            attribute += ")"
+        return attribute

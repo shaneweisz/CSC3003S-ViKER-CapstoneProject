@@ -206,7 +206,8 @@ class ARM_Model:
                                     + constraint.get_references())
                                 new_rel.set_entity1(arm_entity.get_name())
                                 new_rel.set_entity2(constraint.get_references())
-                                new_rel.set_mult1(("1",))
+                                # As per Prof Keet's request, assume it is n-1 not 1-1 as per document.
+                                new_rel.set_mult1(("n",))  # FK is on the n side of the relationship
                                 new_rel.set_mult2(("1",))
                                 eer_model.add_eer_relationship(new_rel)
                                 break

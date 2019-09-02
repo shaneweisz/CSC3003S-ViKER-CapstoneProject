@@ -4,6 +4,7 @@ from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
 import arm
 import eer
+import os  # for file path manipulation
 
 
 class Controller():
@@ -34,7 +35,7 @@ class Controller():
         self.gui.btn_transform.config(command=self.transform)
 
     def open_eer_file_picker(self):
-        self.eer_filename = fd.askopenfilename(initialdir="/",
+        self.eer_filename = fd.askopenfilename(initialdir=os.path.dirname(__file__) + "/..",
                                                title="Select file",
                                                filetypes=(
                                                    ("xml files", "*.xml"),
@@ -55,7 +56,7 @@ class Controller():
             self.eer_filename = "No EER file selected yet"
 
     def open_arm_file_picker(self):
-        self.arm_filename = fd.askopenfilename(initialdir="/",
+        self.arm_filename = fd.askopenfilename(initialdir=os.path.dirname(__file__) + "/..",
                                                title="Select file",
                                                filetypes=(
                                                    ("xml files", "*.xml"),
@@ -70,18 +71,16 @@ class Controller():
             self.eer_loaded = False
             self.gui.btn_transform.config(text="Transform to EER")
             self.gui.btn_transform.config(state="normal")
-            # messagebox.showinfo("Load",
-            #                     "File Directory Selected:\n{}"
-            #                     .format(self.arm_filename))
         else:
             # User clicked cancel
             self.arm_filename = "No ARM file selected yet"
 
     def save_EER(self):
         if self.eer_loaded:
-            f = fd.asksaveasfile(initialdir="/",
+            f = fd.asksaveasfile(initialdir=os.path.dirname(__file__) + "/..",
                                  title="Choose Name and Location to \
                                            Save Transformation Output",
+                                 initialfile="eer_transformation_output.txt",
                                  filetypes=(
                                      ("text files", "*.txt"),
                                      ("all files", "*.*")))
@@ -93,7 +92,8 @@ class Controller():
 
     def save_ARM(self):
         if self.arm_loaded:
-            f = fd.asksaveasfile(initialdir="/",
+            f = fd.asksaveasfile(initialdir=os.path.dirname(__file__) + "/..",
+                                 initialfile="arm_transformation_output.txt",
                                  title="Choose Name and Location to \
                                            Save Transformation Output",
                                  filetypes=(

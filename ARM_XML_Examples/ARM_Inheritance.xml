@@ -17,9 +17,7 @@
     <entity name="Undergrad" type="Entity">
 		<attribute type="attr" data_type="OID">self</attribute>
         <attribute type="attr" data_type="INT">Sno</attribute>
-        <attribute type="attr" data_type="STRING">name</attribute>
-        <attribute type="attr" data_type="STRING">other</attribute>
-		<attribute type="attr" data_type="STRING">major</attribute>
+        <attribute type="attr" data_type="STRING">major</attribute>
 		<constraint type="pk">self</constraint>
         <constraint type="path_fd" target="self">
           <fd_attrib>Sno</fd_attrib>
@@ -33,9 +31,7 @@
     <entity name="Postgrad" type="Entity">
 		<attribute type="attr" data_type="OID">self</attribute>
         <attribute type="attr" data_type="INT">Sno</attribute>
-        <attribute type="attr" data_type="STRING">name</attribute>
-        <attribute type="attr" data_type="STRING">other</attribute>
-		<attribute type="attr" data_type="STRING">supervisor</attribute>
+        <attribute type="attr" data_type="STRING">supervisor</attribute>
 		<constraint type="pk">self</constraint>
         <constraint type="path_fd" target="self">
           <fd_attrib>Sno</fd_attrib>

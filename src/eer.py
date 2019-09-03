@@ -395,12 +395,12 @@ class EER_Relationship:
                 relationship += "   " + str(attribute) + "\n"
         relationship += "Entities:\n"
         relationship += "   " + self.__entity1 + " (" + self.__mult1[0]
-        if(self.__mult1[0] != None):
+        if(len(self.__mult1) > 1):
             relationship += ".." + self.__mult1[1]
         relationship += ")\n"
 
         relationship += "   " + self.__entity2 + " (" + self.__mult2[0]
-        if(self.__mult2[1] != ""):
+        if(len(self.__mult2) > 1):
             relationship += ".." + self.__mult2[1]
         relationship += ")\n"
 

@@ -36,6 +36,8 @@ class Tests(unittest2.TestCase):
         self.assertEqual(entity.get_identifier()[0], "pid", "Should be pid")
         self.assertEqual(entity.get_identifier()[1], "name", "Should be name")
         # Test get_inheritance_constraint()
+        constraint = eer_constraints.Inheritance_Constraint("Parent", True, False)
+        entity.add_constraint(constraint)
         inheritance_constraint = entity.get_inheritance_constraint()
         self.assertEqual(inheritance_constraint.is_disjoint(), True, "Should be True")
         self.assertEqual(inheritance_constraint.is_covering(), False, "Should be False")
@@ -74,8 +76,9 @@ class Tests(unittest2.TestCase):
     def test_LoadEER(self):
         EER = eer.EER_Model()
         EER.load_eer()
-        #Write tests once XML schema is finalised
-        print(EER )
+        # Write tests once XML schema is finalised
+        # print(EER)
+
 
 if __name__ == '__main__':
     unittest2.main()

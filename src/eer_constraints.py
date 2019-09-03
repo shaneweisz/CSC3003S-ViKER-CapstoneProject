@@ -34,9 +34,10 @@ class Identifier_Constraint(Constraint):
     def __str__(self):
         """
         String representation of the identifier constraint.
-        e.g. 'identifier (self)'
+        e.g. 'Identifier: StudentNo'
         """
-        return "Identifier: {}".format(self.__identifier)
+        id_str = ", ".join(self.__identifier)
+        return "Identifier: {}".format(id_str)
 
 
 class Inheritance_Constraint(Constraint):
@@ -73,6 +74,15 @@ class Inheritance_Constraint(Constraint):
     def __str__(self):
         """
         String representation of the inheritance constraint.
-        e.g. 'isa Person'
+        e.g. 'ISA Person'
         """
-        return "Inheritance Constraint: [parent = {}] [disjoint = {}] [covering = {}]".format(self.__parent, self.__disjoint, self.__covering)
+        constraints = []
+        if self.__disjoint:
+            constraints.append("disjoint")
+        if self.__covering:
+            constraints.append("covering")
+        if constraints != []:
+            constraints_str = "(" + " and ".join(constraints) + ")"
+        else:
+            constraints_str = ""
+        return "ISA {} {}".format(self.__parent, constraints_str)

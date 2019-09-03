@@ -268,6 +268,7 @@ class ARM_Model:
         str_repr = "ARM Model:"
         underline = "\n" + "-"*len(str_repr) + "\n"  # to underline 'ARM Model'
         str_repr += underline
+        str_repr += "\n"
         str_repr += "\n".join(ent.__str__() for ent in self.arm_entities)
         return str_repr
 

@@ -57,7 +57,7 @@ class EER_Model:
         assert type(new_eer_relationship) == EER_Relationship
         self.__eer_relationships.append(new_eer_relationship)
 
-    def load_eer(self, filename='../EER_XML_Examples/EER_WeakPaymentLoan.xml'):
+    def load_eer(self, filename='EER_XML_Examples/EER_WeakPaymentLoan.xml'):
         """
         Loads and EER model from an XML file into a python object representation
         """

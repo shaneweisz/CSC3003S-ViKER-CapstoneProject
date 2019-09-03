@@ -1,0 +1,18 @@
+<eer>
+	<entity name="Supplier" type="Entity" weak="False">
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">sname</attribute>
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">slocation</attribute>
+		<constraint type="identifier">sname</constraint>
+	</entity>
+
+	<entity name="Part" type="Entity" weak="False">
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">PID</attribute>
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">pname</attribute>
+		<constraint type="identifier">PID</constraint>
+	</entity>
+
+	<relationship name="Supplies" type="Relationship" weak="False">
+		<related_entity type="ent" mult_left="0" mult_right="n">Supplier</related_entity>
+		<related_entity type="ent" mult_left="0" mult_right="n">Part</related_entity>
+	</relationship>
+</eer>

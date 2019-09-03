@@ -1,5 +1,4 @@
 # ViKER Capstone Project
-(Note: we should look at https://dbader.org/blog/write-a-great-readme-for-your-github-project and https://github.com/dbader/readme-template for a README template)
 
 ## 1. Project Description
 
@@ -13,7 +12,11 @@ The tool has been made accessible for a user in the form of a well-designed user
 
 Run `make run` from within the base folder. The GUI should be intuitive and easy-to-use.
 
-### View the static GUI
+### Run all the Unit Tests
+
+Run `make tests` from within the base folder.
+
+### View the Static GUI
 
 Run `make gui` from within the base folder.
 

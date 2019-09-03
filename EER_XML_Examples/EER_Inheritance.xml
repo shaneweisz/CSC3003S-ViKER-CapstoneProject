@@ -1,0 +1,18 @@
+<eer>
+	<entity name="Student" type="Entity" weak="False">
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">Sno</attribute>
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">name</attribute>
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">other</attribute>
+		<constraint type="identifier">Sno</constraint>
+	</entity>
+
+	<entity name="Undergrad" type="Entity" weak="False">
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">major</attribute>
+        <constraint type="inheritance" covering="True" disjoint="True">Student</constraint>
+	</entity>
+
+	<relationship name="Postgrad" type="Entity" weak="False">
+        <attribute type="attr" multi_valued="False" derived="False" optional="False">supervisor</attribute>
+        <constraint type="inheritance" covering="True" disjoint="True">Student</constraint>
+	</relationship>
+</eer>

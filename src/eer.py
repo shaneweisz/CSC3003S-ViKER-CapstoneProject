@@ -203,6 +203,7 @@ class EER_Model:
             entity2 = relationship.get_entity2()
             mult1 = relationship.get_mult1()
             mult2 = relationship.get_mult2()
+            attrs = relationship.get_attributes()
 
             # Check for WEAK relationship
             # If so, extend the pathfd constraint of the WEAK entity beyond the partial identifier accordinly
@@ -266,9 +267,24 @@ class EER_Model:
                 # Add foreign key - the name of the other entity
                 fk_name = entity1.lower()
                 victim_entity.add_attribute(arm.ARM_Attribute(fk_name, "OID"))
-                victim_entity.add_constraint(constraints.FK_Constraint(fk_name, fk_name, entity1))
+                victim_entity.add_constraint(
+                    arm_constraints.FK_Constraint(fk_name, fk_name, entity1))
             else:
-                pass
+                # Many-to-many, so add a new entity for the relationship
+                new_entity = arm.ARM_Entity(name)
+                new_entity.add_attribute(arm.ARM_Attribute("self", "OID"))
+                new_entity.add_attribute(arm.ARM_Attribute(entity1.lower(), "anyType"))
+                new_entity.add_attribute(arm.ARM_Attribute(entity2.lower(), "anyType"))
+                for attribute in attrs:
+                    new_entity.add_attribute(arm.ARM_Attribute(attribute, "anyType"))
+                new_entity.add_constraint(arm_constraints.PK_Constraint("self"))
+                new_entity.add_constraint(arm_constraints.Pathfd_Constraint(
+                    [entity1.lower(), entity2.lower()], "self"))
+                new_entity.add_constraint(arm_constraints.FK_Constraint(
+                    entity1.lower(), entity1.lower(), entity1))
+                new_entity.add_constraint(arm_constraints.FK_Constraint(
+                    entity2.lower(), entity2.lower(), entity2))
+                arm_model.add_arm_entity(new_entity)
 
         return arm_model
 

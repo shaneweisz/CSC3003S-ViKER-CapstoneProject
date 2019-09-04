@@ -1,6 +1,6 @@
-import unittest2
-import arm
 import arm_constraints
+import arm
+import unittest2
 
 
 class Tests(unittest2.TestCase):

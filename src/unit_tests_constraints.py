@@ -1,6 +1,7 @@
 import eer_constraints as EC
 import unittest2
 
+
 class Tests(unittest2.TestCase):
 
     def test_Identifier_Constraint(self):

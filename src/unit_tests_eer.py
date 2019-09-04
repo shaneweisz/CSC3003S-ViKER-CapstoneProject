@@ -1,6 +1,7 @@
 import eer
-import arm
 import eer_constraints
+import arm
+
 import unittest2
 
 

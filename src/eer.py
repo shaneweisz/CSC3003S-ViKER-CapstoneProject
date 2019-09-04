@@ -228,9 +228,21 @@ class EER_Model:
                 arm_entity.add_constraint(arm_constraints.Inheritance_Constraint(parent_name))
 
                 # If disjoint, find all other entities that are disjoint
-                # subrelations of the parent and add a disjointess constraint
+                # subrelations of the parent and add to the disjointess constraint
                 if disjoint:
-                    pass
+                    disj_constraint = arm_constraints.Disjointness_Constraint([])
+                    for ent in arm_model.get_arm_entities():
+                        for constraint in ent.get_constraints():
+                            if type(constraint) == arm_constraints.Inheritance_Constraint \
+                                    and constraint.get_parent() == parent_name:
+                                # Add the other subrelation to this entity's disjointness constraint
+                                disj_constraint.add_to_disjoint_with(ent.get_name())
+                                # Find the other subrelation's disjointess constraint
+                                # and add this entity to it
+                                for in_constraint in ent.get_constraints():
+                                    if type(in_constraint) == arm_constraints.Disjointness_Constraint:
+                                        in_constraint.add_to_disjoint_with(name)
+                    arm_entity.add_constraint(disj_constraint)
 
                 # If covering, add to the cover constraint of the parent
                 if covering:

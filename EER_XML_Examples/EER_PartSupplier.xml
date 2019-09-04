@@ -12,6 +12,7 @@
 	</entity>
 
 	<relationship name="Supplies" type="Relationship" weak="False">
+		<attribute type="attr" multi_valued="False" derived="False" optional="False">price</attribute>
 		<related_entity type="ent" mult_left="0" mult_right="n">Supplier</related_entity>
 		<related_entity type="ent" mult_left="0" mult_right="n">Part</related_entity>
 	</relationship>

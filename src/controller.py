@@ -28,10 +28,14 @@ class Controller():
         self.eer_loaded = False
         self.arm_loaded = False
         self.gui = view
-        self.gui.load_menu.entryconfigure(0, command=self.open_eer_file_picker)
-        self.gui.load_menu.entryconfigure(1, command=self.open_arm_file_picker)
-        self.gui.save_menu.entryconfigure(0, command=self.save_EER)
-        self.gui.save_menu.entryconfigure(1, command=self.save_ARM)
+        self.gui.load_menu.add_command(label="Load EER",
+                                       command=self.open_eer_file_picker)
+        self.gui.load_menu.add_command(label="Load ARM",
+                                       command=self.open_arm_file_picker)
+        self.gui.save_menu.add_command(label="Save EER",
+                                       command=self.save_EER)
+        self.gui.save_menu.add_command(label="Save ARM",
+                                       command=self.save_ARM)
         self.gui.btn_transform.config(command=self.transform)
 
     def open_eer_file_picker(self):

@@ -108,14 +108,10 @@ class GUI(tk.Frame):
         # Load Menu
         self.load_menu = tk.Menu(root_menu)
         root_menu.add_cascade(label="Load", menu=self.load_menu)
-        self.load_menu.add_command(label="Load EER")
-        self.load_menu.add_command(label="Load ARM")
 
         # Save Menu
         self.save_menu = tk.Menu(root_menu)
         root_menu.add_cascade(label="Save", menu=self.save_menu)
-        self.save_menu.add_command(label="Save EER")
-        self.save_menu.add_command(label="Save ARM")
 
         # Transform Button
         self.btn_transform = tk.Button(self.window,

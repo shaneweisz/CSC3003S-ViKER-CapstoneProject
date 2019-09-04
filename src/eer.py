@@ -163,7 +163,7 @@ class EER_Model:
                 if type(constraint) == eer_constraints.Inheritance_Constraint:
                     has_parent = True
 
-                    # STEP I: If the entity is 'strong'
+            # STEP I: If the entity is 'strong'
             if not eer_entity.is_weak() and not has_parent:
                 # STEP I_A - Table Declaration
 
@@ -351,6 +351,29 @@ class EER_Model:
                 new_entity.add_constraint(arm_constraints.FK_Constraint(
                     entity2.lower(), entity2.lower(), entity2))
                 arm_model.add_arm_entity(new_entity)
+
+        # STEP VI: Additional 'implicit' disjointness constraints
+        non_hierarchy_entities = []
+        for arm_entity in arm_model.get_arm_entities():
+            # Check if the entity inherits from another entity
+            has_parent = False
+            for constraint in arm_entity.get_constraints():
+                if type(constraint) == arm_constraints.Inheritance_Constraint:
+                    has_parent = True
+            if not has_parent:
+                non_hierarchy_entities.append(arm_entity.get_name())
+        for arm_entity in arm_model.get_arm_entities():
+            has_parent = False
+            for constraint in arm_entity.get_constraints():
+                if type(constraint) == arm_constraints.Inheritance_Constraint:
+                    has_parent = True
+            if not has_parent:
+                implicit_disjoint_entities = non_hierarchy_entities.copy()
+                implicit_disjoint_entities.remove(arm_entity.get_name())
+                if len(implicit_disjoint_entities) > 0:
+                    arm_entity.add_constraint(
+                        arm_constraints.Disjointness_Constraint(
+                            implicit_disjoint_entities))
 
         return arm_model
 

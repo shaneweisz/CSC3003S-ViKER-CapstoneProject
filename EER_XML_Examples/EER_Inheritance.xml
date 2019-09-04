@@ -11,8 +11,8 @@
         <constraint type="inheritance" covering="True" disjoint="True">Student</constraint>
 	</entity>
 
-	<relationship name="Postgrad" type="Entity" weak="False">
+	<entity name="Postgrad" type="Entity" weak="False">
         <attribute type="attr" multi_valued="False" derived="False" optional="False">supervisor</attribute>
         <constraint type="inheritance" covering="True" disjoint="True">Student</constraint>
-	</relationship>
+	</entity>
 </eer>

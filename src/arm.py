@@ -142,7 +142,6 @@ class ARM_Model:
             weak_entity_to_add = False
 
             if h == 0:
-                # TODO: Consider candidate key constraint
                 new_ent = eer.EER_Entity(arm_entity.get_name())
                 entity_to_add = True
 

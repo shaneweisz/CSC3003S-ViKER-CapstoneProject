@@ -121,6 +121,10 @@ class Cover_Constraint(Constraint):
         """Getter for the covered_by."""
         return self.covered_by
 
+    def add_to_covered_by(self, new_entity):
+        """Adds another entity to the covered_by list."""
+        self.covered_by.append(new_entity)
+
     def __str__(self):
         """
         String representation of the cover constraint.
@@ -142,6 +146,10 @@ class Disjointness_Constraint(Constraint):
 
     def __init__(self, disjoint_with):
         self.disjoint_with = disjoint_with
+
+    def add_to_disjoint_with(self, new_entity):
+        """Adds another entity to the disjoint_with list."""
+        self.disjoint_with.append(new_entity)
 
     def get_disjoint_with(self):
         """Getter for the disjoint_with."""

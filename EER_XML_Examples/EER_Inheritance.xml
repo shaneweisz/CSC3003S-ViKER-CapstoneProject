@@ -8,11 +8,11 @@
 
 	<entity name="Undergrad" type="Entity" weak="False">
 		<attribute type="attr" multi_valued="False" derived="False" optional="False">major</attribute>
-        <constraint type="inheritance" covering="True" disjoint="True">Student</constraint>
+        <constraint type="inheritance" covering="True" disjoint="False">Student</constraint>
 	</entity>
 
 	<relationship name="Postgrad" type="Entity" weak="False">
         <attribute type="attr" multi_valued="False" derived="False" optional="False">supervisor</attribute>
-        <constraint type="inheritance" covering="True" disjoint="True">Student</constraint>
+        <constraint type="inheritance" covering="True" disjoint="False">Student</constraint>
 	</relationship>
 </eer>

@@ -155,8 +155,16 @@ class EER_Model:
 
         # Create the relations for entities
         for eer_entity in self.__eer_entities:
-            # STEP I: If the entity is 'strong'
-            if not eer_entity.is_weak():
+            # Check first if the entity inherits from another entity
+            # If so, it will not have its own identifier
+            # since its identifier will be that of the parent entity
+            has_parent = False
+            for constraint in eer_entity.get_constraints():
+                if type(constraint) == eer_constraints.Inheritance_Constraint:
+                    has_parent = True
+
+                    # STEP I: If the entity is 'strong'
+            if not eer_entity.is_weak() and not has_parent:
                 # STEP I_A - Table Declaration
 
                 name = eer_entity.get_name()
@@ -175,7 +183,7 @@ class EER_Model:
                 arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))
                 arm_entity.add_constraint(arm_constraints.Pathfd_Constraint(pk, "self"))
                 arm_model.add_arm_entity(arm_entity)
-            else:
+            elif eer_entity.is_weak() and not has_parent:
                 # STEP II: If the entity is 'weak'
                 # STEP II_A - Table Declaration
 
@@ -195,8 +203,54 @@ class EER_Model:
                 arm_entity.add_constraint(arm_constraints.PK_Constraint("self"))
                 arm_entity.add_constraint(arm_constraints.Pathfd_Constraint(pk, "self"))
                 arm_model.add_arm_entity(arm_entity)
+            elif has_parent:
+                # Then this entity inherits from a parent
+                name = eer_entity.get_name()
+                arm_entity = arm.ARM_Entity(name)
+                arm_entity.add_attribute(arm.ARM_Attribute("self", "OID"))
+                for eer_attr in eer_entity.get_attributes():
+                    arm_attr = arm.ARM_Attribute(eer_attr.get_name(), "anyType")
+                    arm_entity.add_attribute(arm_attr)
 
-        # Create the relations for relationships
+                parent_name = None
+                covering = False
+                disjoint = False
+                for constraint in eer_entity.get_constraints():
+                    if type(constraint) == eer_constraints.Inheritance_Constraint:
+                        parent_name = constraint.get_parent()
+                        covering = constraint.is_covering()
+                        disjoint = constraint.is_disjoint()
+                # Since this entity inherits from a parent,
+                # there should be a corresponding inheritance constraint:
+                assert parent_name is not None
+
+                # Add an ISA constraint to this entity
+                arm_entity.add_constraint(arm_constraints.Inheritance_Constraint(parent_name))
+
+                # If disjoint, find all other entities that are disjoint
+                # subrelations of the parent and add a disjointess constraint
+                if disjoint:
+                    pass
+
+                # If covering, add to the cover constraint of the parent
+                if covering:
+                    parent_ent = arm_model.find_entity(parent_name)
+                    # There should be a parent ARM entity corresponding
+                    # to the parent name
+                    assert parent_ent is not None
+                    for constraint in parent_ent.get_constraints():
+                        # check for an existing cover constraint
+                        # if so, add to it
+                        if type(constraint) == arm_constraints.Cover_Constraint:
+                            constraint.add_to_covered_by(name)
+                            break
+                    else:
+                        # if there isnt yet a cover constraint in the parent
+                        parent_ent.add_constraint(arm_constraints.Cover_Constraint([name]))
+
+                arm_model.add_arm_entity(arm_entity)
+
+                # Create the relations for relationships
         for relationship in self.__eer_relationships:
             name = relationship.get_name()
             entity1 = relationship.get_entity1()
@@ -482,6 +536,10 @@ class EER_Entity:
         """Add a constraint on the entity"""
         assert(len(self.__constraints) <= 2)
         self.__constraints.append(constraint)
+
+    def get_constraints(self):
+        """Get all the constraints of the entity"""
+        return self.__constraints
 
     def get_identifier(self):
         """

@@ -46,15 +46,19 @@ class Controller():
                                                    ("all files", "*.*")))
         if self.eer_filename != "":
             # Clears the text from start ("1.0") to end
-            self.gui.txt_eer.delete("1.0", tk.END)
-            self.gui.txt_arm.delete("1.0", tk.END)
-            self.eer_model = eer.EER_Model()
-            self.eer_model.load_eer(self.eer_filename)
-            self.gui.txt_eer.insert(tk.END, self.eer_model.__str__())
-            self.eer_loaded = True
-            self.arm_loaded = False
-            self.gui.btn_transform.config(text="Transform to ARM")
-            self.gui.btn_transform.config(state="normal")
+            try:
+                self.eer_model = eer.EER_Model()
+                self.eer_model.load_eer(self.eer_filename)
+                self.gui.txt_eer.delete("1.0", tk.END)
+                self.gui.txt_arm.delete("1.0", tk.END)
+                self.gui.txt_eer.insert(tk.END, self.eer_model.__str__())
+                self.eer_loaded = True
+                self.arm_loaded = False
+                self.gui.btn_transform.config(text="Transform to ARM")
+                self.gui.btn_transform.config(state="normal")
+            except:
+                messagebox.showinfo("Load Error", "Incorrect EER XML format")
+
         else:
             # User clicked cancel
             self.eer_filename = "No EER file selected yet"
@@ -66,15 +70,18 @@ class Controller():
                                                    ("xml files", "*.xml"),
                                                    ("all files", "*.*")))
         if self.arm_filename != "":
-            self.gui.txt_eer.delete("1.0", tk.END)
-            self.gui.txt_arm.delete("1.0", tk.END)
-            self.arm_model = arm.ARM_Model()
-            self.arm_model.load_arm(self.arm_filename)
-            self.gui.txt_arm.insert(tk.END, self.arm_model.__str__())
-            self.arm_loaded = True
-            self.eer_loaded = False
-            self.gui.btn_transform.config(text="Transform to EER")
-            self.gui.btn_transform.config(state="normal")
+            try:
+                self.arm_model = arm.ARM_Model()
+                self.arm_model.load_arm(self.arm_filename)
+                self.gui.txt_eer.delete("1.0", tk.END)
+                self.gui.txt_arm.delete("1.0", tk.END)
+                self.gui.txt_arm.insert(tk.END, self.arm_model.__str__())
+                self.arm_loaded = True
+                self.eer_loaded = False
+                self.gui.btn_transform.config(text="Transform to EER")
+                self.gui.btn_transform.config(state="normal")
+            except:
+                messagebox.showinfo("Load Error", "Incorrect ARM XML format")
         else:
             # User clicked cancel
             self.arm_filename = "No ARM file selected yet"

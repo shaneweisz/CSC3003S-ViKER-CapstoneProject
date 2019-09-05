@@ -142,7 +142,7 @@ class GUI(tk.Frame):
         btn_exit = tk.Button(self.window,
                              text="Exit",
                              fg="red",
-                             command=lambda: self.window.quit())
+                             command=lambda: self.window.quit() if messagebox.askyesno("Exit", "Are you sure you wish to exit?", icon='warning') is True else None)
         btn_exit.config(font=(FONT, 14))
         btn_exit.grid(row=0, column=8)
 

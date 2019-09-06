@@ -16,10 +16,6 @@ Run `make run` from within the base folder. The GUI should be intuitive and easy
 
 Run `make tests` from within the base folder.
 
-### View the Static GUI
-
-Run `make gui` from within the base folder.
-
 ### Remove all saved transformation outputs
 
 Run `make clean` from within the base folder.  

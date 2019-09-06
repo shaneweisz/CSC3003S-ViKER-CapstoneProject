@@ -12,7 +12,3 @@ tests:
 clean:
 	rm Transformation_Outputs/*.txt
 	rm *.txt
-
-# Run `make gui` to view the static GUI of the application
-gui:
-	python3 src/view.py

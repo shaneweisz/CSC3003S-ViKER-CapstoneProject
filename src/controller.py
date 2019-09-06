@@ -32,10 +32,13 @@ class Controller():
                                        command=self.open_eer_file_picker)
         self.gui.load_menu.add_command(label="Load ARM",
                                        command=self.open_arm_file_picker)
+
+        self.gui.root_menu.add_cascade(label="Load", menu=self.gui.load_menu)
         self.gui.save_menu.add_command(label="Save EER",
                                        command=self.save_EER)
         self.gui.save_menu.add_command(label="Save ARM",
                                        command=self.save_ARM)
+        self.gui.root_menu.add_cascade(label="Save", menu=self.gui.save_menu)
         self.gui.btn_transform.config(command=self.transform)
 
     def open_eer_file_picker(self):

@@ -102,16 +102,14 @@ class GUI(tk.Frame):
         self.window.grid_columnconfigure(3, minsize=50)
 
         # Root Menu
-        root_menu = tk.Menu(self.window)
-        self.window.config(menu=root_menu)
+        self.root_menu = tk.Menu(self.window)
+        self.window.config(menu=self.root_menu)
 
         # Load Menu
-        self.load_menu = tk.Menu(root_menu)
-        root_menu.add_cascade(label="Load", menu=self.load_menu)
+        self.load_menu = tk.Menu(self.root_menu)
 
         # Save Menu
-        self.save_menu = tk.Menu(root_menu)
-        root_menu.add_cascade(label="Save", menu=self.save_menu)
+        self.save_menu = tk.Menu(self.root_menu)
 
         # Transform Button
         self.btn_transform = tk.Button(self.window,

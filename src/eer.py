@@ -342,7 +342,7 @@ class EER_Model:
                 new_entity.add_attribute(arm.ARM_Attribute(entity1.lower(), "anyType"))
                 new_entity.add_attribute(arm.ARM_Attribute(entity2.lower(), "anyType"))
                 for attribute in attrs:
-                    new_entity.add_attribute(arm.ARM_Attribute(attribute, "anyType"))
+                    new_entity.add_attribute(arm.ARM_Attribute(attribute.get_name(), "anyType"))
                 new_entity.add_constraint(arm_constraints.PK_Constraint("self"))
                 new_entity.add_constraint(arm_constraints.Pathfd_Constraint(
                     [entity1.lower(), entity2.lower()], "self"))

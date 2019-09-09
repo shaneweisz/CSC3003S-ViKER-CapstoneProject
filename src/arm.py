@@ -154,7 +154,7 @@ class ARM_Model:
                 new_rel.set_mult2(("0", "n"))
                 for attr in arm_entity.get_attributes():
                     if attr.get_name() not in pk and attr.get_name() != "self":
-                        new_rel.add_attribute(attr.get_name())
+                        new_rel.add_attribute(eer.EER_Attribute(attr.get_name()))
                 eer_model.add_eer_relationship(new_rel)
 
             # Step I_D - check if a weak entity should be created
